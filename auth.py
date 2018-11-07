@@ -6,8 +6,8 @@ def hash(hash_input):
     digest.update(hash_input)
     return digest.finalize()
 
-def verify(a, b):
-    return hash(a) == b
+def verify_ticket(client_ticket, server_ticket):
+    return hash(client_ticket) == server_ticket
 
 def generate_tokens(seed, number_of_tokens):
     tickets = list()
