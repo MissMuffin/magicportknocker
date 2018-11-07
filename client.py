@@ -27,6 +27,8 @@ try:
     data, server = sock.recvfrom(4096)
     print('received {!r}'.format(data))
 
+
+
 finally:
     print('closing socket')
     sock.close()
