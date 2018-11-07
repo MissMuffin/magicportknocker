@@ -2,7 +2,7 @@ CLIENT
 [x] hash number x times and keep in list[x]
 [] send udp packet (3 times in case it gets lost)
     [] 99th hash (= ticket)
-    [] ip
+    [] ip (ipv4, ipv6)
     [] (port opening duration)
     [] (signature)
 [] try to tcp connect to port z 
