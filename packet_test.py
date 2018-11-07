@@ -4,7 +4,7 @@ import cryptography.exceptions
 
 def test_good():
     secret = "sdfsdhgh"
-    ticket = "t"
+    ticket = b"t"
     ip = "2"
 
     p = Packet(ticket, ip)
@@ -15,7 +15,7 @@ def test_good():
 
 def test_bad_signature():
     secret = "secret"
-    ticket = "t"
+    ticket = b"t"
     ip = "2"
 
     p = Packet(ticket, ip)
