@@ -6,7 +6,7 @@ def test_save_and_load():
     s = State("secret", 9)
     s.save()
 
-    read_state = State.read()
+    read_state = State.load()
 
     assert s.secret == read_state.secret 
     assert s.number_of_remaining_tickets == read_state.number_of_remaining_tickets
