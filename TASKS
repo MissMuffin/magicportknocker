@@ -1,18 +1,44 @@
-CLIENT 
-[x] hash number x times and keep in list[x]
-[] send udp packet (3 times in case it gets lost)
-    [x] 99th hash (= ticket)
-    [x] ip (ipv4, ipv6)
-    [] (port opening duration)
-    [x] (signature)
-[] try to tcp connect to port z 
-    [] succes: yay
-    [] failure: (5 sec without connection) resend udp packets
+# CLIENT 
+- [ ] do setup with json from admin
+- [x] hash number x times and keep in list[x]
+- [ ] send udp packet (3 times in case it gets lost?)
+    - [x] 99th hash (= ticket)
+    - [x] ip (ipv4, ipv6)
+    - [ ] (port opening duration)
+    - [x] signature
+- [ ] try to tcp connect to port z 
+    - [ ] succes: yay
+    - [ ] failure: (5 sec without connection) resend udp packets
 
-SERVER
-[x] hash number 100 times and keep last hash
-[x] listen on port y for udp from client
-[] when receiving packet:
-    [x] hash ticket & compare with stored hash
-    [] if same: open port z for client ip (& close after duration)
-    [] else: nothing
+# SERVER
+- [ ] read list of users and their details
+- [x] listen on port y for udp from client
+- [ ] when receiving packet:
+    - [ ] verify signature
+    - [x] hash ticket & compare with stored hash
+    - [ ] if same: 
+        - [ ] write new ticket to disk in config 
+        - [ ] run script to open port z for client ip
+        - [ ] run script to close port after duration)
+    - [ ] else: nothing
+
+# ADMIN
+- [ ] enter number of tickets n
+- [ ] enter list of users with corresponding privileges (this is for now 1 port that will open per user. multiple users can have the same port)
+- [ ] per user generate:
+    - [ ] generate a keypair per user for signing (one pari per user so that if one user is hacked, it wont compromise the all other users' signatures)
+    - [ ] user id
+    - [ ] secret
+    - [ ] digest (first ticket) from hashin the secret n times
+- [ ] write config to disk as json: users (id, ticket, n, priv key, privilege)
+- [ ] generate one setup json per user. should contain:
+    - [ ] user id
+    - [ ] server ip
+    - [ ] secret
+    - [ ] number of tickets
+    - [ ] pub key for signing
+
+# Requirements
+- everything used must be open source
+- server breach should not compromise tickets and user authentication method
+- 
