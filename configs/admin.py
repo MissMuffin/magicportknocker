@@ -1,14 +1,15 @@
 import os
 import json
 from base64 import b64encode
+import click
 
-class User(json.JSONEncoder):
+class User():
     user_id = 0
     user_name = ""
     n = 0
     signing_key = b""
     secret = b""
-    privilege = ""
+    privilege = ""  # list of ports
     verification_key = b""
 
     def __init__(self, user_id, user_name, n=10, signing_key=b"", verification_key=b"", secret=b"", privilege=""):
@@ -18,7 +19,7 @@ class User(json.JSONEncoder):
         self.signing_key = signing_key
         self.verification_key = verification_key
         self.secret = secret
-        self.privilege = privilege
+        self.privilege = privilege 
 
     def get_server_config(self):
         return {"user_id": self.user_id,
@@ -29,7 +30,7 @@ class User(json.JSONEncoder):
 
     def get_user_setup(self):
         return {"user_id": self.user_id,
-                "user_name": self.user_name,
+                "privileges": self.privilege,
                 "n": self.n,
                 "secret": self.secret.decode(),
                 "signing_key": self.signing_key.decode()}
@@ -37,7 +38,7 @@ class User(json.JSONEncoder):
 # define number of tickets
 number_of_tickets = 10
 
-# enter users and their privileges
+# CRUD
 users = []
 user_id = 0
 
@@ -60,13 +61,14 @@ while True:
 
 # generate other stuff and write config to disk
 server_config_output = []
+random_strength = 32
 for user in users:
     # string of random bytes
-    user.secret = b64encode(os.urandom(10))
+    user.secret = b64encode(os.urandom(random_strength))
 
     # generate sign/verify key pair
-    user.signing_key = b64encode(os.urandom(10))
-    user.verification_key = b64encode(os.urandom(10))
+    user.signing_key = b64encode(os.urandom(random_strength))
+    user.verification_key = b64encode(os.urandom(random_strength))
 
     # save user setup files
     fname = "usersetup_" + str(user.user_id) + ".json"
@@ -79,3 +81,8 @@ for user in users:
 fname = "serverconfig.json"
 with open(fname, "w") as f:
     json.dump(server_config_output, f)
+
+with open(fname, "r") as f:
+    state_dict =  json.load(f)
+
+pass
