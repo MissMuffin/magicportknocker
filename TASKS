@@ -26,17 +26,18 @@
 - [ ] enter number of tickets n
 - [ ] enter list of users with corresponding privileges (this is for now 1 port that will open per user. multiple users can have the same port)
 - [ ] per user generate:
-    - [ ] generate a keypair per user for signing (one pari per user so that if one user is hacked, it wont compromise the all other users' signatures)
+    - [ ] generate a keypair per user for signing (one pair per user so that if one user is hacked, it wont compromise the all other users' signatures)
     - [ ] user id
     - [ ] secret
     - [ ] digest (first ticket) from hashin the secret n times
 - [ ] write config to disk as json: users (id, ticket, n, priv key, privilege)
 - [ ] generate one setup json per user. should contain:
     - [ ] user id
-    - [ ] server ip
+    - [ ] server ip + port for authenticating
     - [ ] secret
     - [ ] number of tickets
-    - [ ] pub key for signing
+    - [ ] pub key for enrypting
+    - [ ] server ip + port for tcp connecting 
 
 # Requirements
 - everything used must be open source

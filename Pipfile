@@ -14,6 +14,7 @@ python_version = "3.5"
 
 pylint = "*"
 pytest = "*"
+requests = "*"
 
 
 [packages]
@@ -21,3 +22,4 @@ pytest = "*"
 cryptography = "*"
 netstruct = "*"
 appdirs = "*"
+click = "*"
