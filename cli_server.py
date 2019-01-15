@@ -40,13 +40,11 @@ def add():
     ports = ports.split()
     state.add_user(user_name=user_name, number_of_tickets=n_tickets, ports=ports, verification_key="secret key")
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
-    pass
 
 @main.command()
 def view():
     """View all users and their priviliges."""
     _show_user_table(state.users)
-    pass
 
 @main.command()
 @click.argument("id")
@@ -61,7 +59,6 @@ def remove(id):
         if click.confirm("Remove this user?"):
             state.remove_user_by_id(user.user_id)
             click.echo("Removed user {}.".format(user.user_name)) 
-        pass
 
 @main.command()
 def remove_all():
@@ -74,6 +71,7 @@ def remove_all():
 @main.command()
 def generate():
     """Generate user setup files."""
+    
     pass
 
 
