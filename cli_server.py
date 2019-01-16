@@ -78,6 +78,9 @@ def generate():
 if __name__ == "__main__":    
     # do setup here for commands
     state = ServerState()
-    state.load()
+    try:
+        state.load()
+    except Exception:
+        pass
     
     main()
