@@ -20,12 +20,12 @@ def test_create_and_save(state):
     assert state.id_count == loaded.id_count and state.users == loaded.users
 
 def test_add_one(state):
-    state.add_user("tim", 10, [1, 2, 3], "key")
+    state.add_user("tim", 10, [1, 2, 3])
     assert state.users[0].user_name == "tim"
     assert state.id_count == 1
 
 def test_add_one_and_load(state):
-    state.add_user("tim", 10, [1, 2, 3], "key")
+    state.add_user("tim", 10, [1, 2, 3])
     loaded = ServerState(save_file=state._save_file)
     loaded.load()
     assert len(loaded.users) == len(state.users)
@@ -33,8 +33,8 @@ def test_add_one_and_load(state):
     assert loaded.users[0].user_name == "tim"
 
 def test_remove_user(state):
-    state.add_user("karl", 5, [6,7], "karl key")
-    state.add_user("zoe", 5, [6,7], "karl key")
+    state.add_user("karl", 5, [6,7])
+    state.add_user("zoe", 5, [6,7])
     for user in state.users:
         if user.user_name == "karl":
             user_id_to_be_removed = user.user_id
@@ -48,8 +48,8 @@ def test_remove_user(state):
     assert loaded.id_count == state.id_count
 
 def test_get_user(state):
-    state.add_user("karl", 5, [6,7], "karl key")
-    state.add_user("zoe", 5, [6,7], "karl key")
+    state.add_user("karl", 5, [6,7])
+    state.add_user("zoe", 5, [6,7])
     gotten = state.get_user(1)
     assert len(state.users) == 2
     assert gotten != None

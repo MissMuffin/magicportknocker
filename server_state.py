@@ -6,19 +6,22 @@ class ServerStateUser():
     user_id = 0
     user_name = ""
     number_of_tickets = 0
+    verification_key = "SECRET"
     ports = []
-    verification_key = b""
 
-    def __init__(self, user_id, user_name, number_of_tickets=10, 
-                verification_key=b"", ports=list()):
+    def __init__(self, user_id, user_name, ports, number_of_tickets=10,
+                 verification_key=None):
         self.user_id = user_id
         self.user_name = user_name
         self.number_of_tickets = number_of_tickets
         self.ports = ports
-        self.ports = ports
-        self.verification_key = verification_key
 
-    # get dict for saving as json
+        if verification_key == None:
+            # TODO generate secret
+            self.verification_key = "SECRET"
+        else:
+            self.verification_key = verification_key
+
     def get_dict(self):
         return {"user_id":self.user_id,
                 "user_name":self.user_name,
@@ -28,7 +31,7 @@ class ServerStateUser():
 
 class ServerState():
     id_count = 0
-    users = [] 
+    users = []
     _save_file = "server_state.json"
 
     def __init__(self, id_count=0, users=None, save_file="server_state.json"):
@@ -40,7 +43,7 @@ class ServerState():
         else:
             self.users = users
         self._save_file = save_file
-        #self.save()
+        # self.save()
 
     #  saves user id count and user data to json
     def save(self):
@@ -48,7 +51,8 @@ class ServerState():
         state["id_count"] = self.id_count
         state["users"] = []
         for user in self.users:
-            state["users"].append(user.__dict__)#.get_dict()
+            # state["users"].append(user.__dict__)  # .get_dict()
+            state["users"].append(user.get_dict())
         with open(self._save_file, "w+") as f:
             json.dump(state, f)
 
@@ -57,25 +61,23 @@ class ServerState():
         with open(self._save_file, "r") as f:
             state_dict = json.load(f)
             for user in state_dict["users"]:
-                self.users.append(ServerStateUser(user["user_id"],
-                                                    user["user_name"],
-                                                    user["number_of_tickets"],
-                                                    user["verification_key"],
-                                                    user["ports"]))
+                self.users.append(ServerStateUser(user_id=user["user_id"],
+                                                  user_name=user["user_name"],
+                                                  number_of_tickets=user["number_of_tickets"],
+                                                  verification_key=user["verification_key"],
+                                                  ports=user["ports"]))
             self.id_count = state_dict["id_count"]
 
     #  adds new user and saves new user to json
-    def add_user(self, user_name, number_of_tickets, ports, verification_key):
-        new_user = ServerStateUser( user_id=self.id_count, 
-                                    user_name=user_name, 
-                                    number_of_tickets=number_of_tickets,
-                                    ports=ports, 
-                                    verification_key=verification_key)
+    def add_user(self, user_name, number_of_tickets, ports):
+        new_user = ServerStateUser(user_id=self.id_count,
+                                   user_name=user_name,
+                                   number_of_tickets=number_of_tickets,
+                                   ports=ports)
         self.users.append(new_user)
         self.id_count += 1
         self.save()
 
-    # if no user: returns None
     def get_user(self, user_id):
         for i, user in enumerate(self.users):
             if user.user_id == user_id:
@@ -88,7 +90,7 @@ class ServerState():
                 self.users.pop(i)
                 self.save()
                 return user
-            else:    
+            else:
                 return "No user with that id."
 
     def remove_all_users(self):
@@ -96,3 +98,4 @@ class ServerState():
         del self.users
         self.users = []
         self.save()
+

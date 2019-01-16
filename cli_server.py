@@ -38,7 +38,7 @@ def add():
     print(n_tickets)
     ports = click.prompt("Enter port priviliges for user {} (separate port numbers with space)".format(user_name))
     ports = ports.split()
-    state.add_user(user_name=user_name, number_of_tickets=n_tickets, ports=ports, verification_key="secret key")
+    state.add_user(user_name=user_name, number_of_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
 
 @main.command()
