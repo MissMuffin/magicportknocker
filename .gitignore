@@ -3,4 +3,5 @@
 *.json
 Pipfile.lock
 .vscode/
+.pytest_cache/
 
