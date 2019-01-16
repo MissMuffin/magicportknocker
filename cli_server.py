@@ -3,7 +3,7 @@ import requests
 from server_state import ServerState
 from terminaltables import AsciiTable
 
-# _state = None
+state = None # type: ServerState
 
 @click.group()
 def main():
