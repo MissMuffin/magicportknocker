@@ -16,6 +16,7 @@ pylint = "*"
 pytest = "*"
 requests = "*"
 "autopep8" = "*"
+rope = "*"
 
 
 [packages]
