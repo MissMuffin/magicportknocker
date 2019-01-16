@@ -55,7 +55,7 @@ def test_get_user(state):
     assert gotten != None
     assert gotten.user_name == "zoe"
 
-def generate_client_setup_file(state):
+def test_generate_client_setup_file(state):
     state.add_user("tim", 6, [56,76])
     user = state.get_user(0)
     user.test_generate_client_setup()
