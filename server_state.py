@@ -22,12 +22,27 @@ class ServerStateUser():
         else:
             self.verification_key = verification_key
 
+    # get dict for saving as json serverside
     def get_dict(self):
-        return {"user_id":self.user_id,
-                "user_name":self.user_name,
-                "number_of_tickets":self.number_of_tickets,
-                "verification_key":self.verification_key,
-                "ports":self.ports}
+        return {"user_id": self.user_id,
+                "user_name": self.user_name,
+                "number_of_tickets": self.number_of_tickets,
+                "verification_key": self.verification_key,
+                "ports": self.ports}
+
+    def get_client_setup_dict(self):
+        return {"user_id": self.user_id,
+                "user_name": self.user_name,
+                "number_of_tickets": self.number_of_tickets,
+                "verification_key": self.verification_key,
+                "ports": self.ports}
+
+    def generate_client_setup_file(self):
+        setup_file = "client_setup_{}_{},json".format(self.user_id, self.user_name)
+        with open(setup_file, "w+") as f:
+            json.dump(self.get_client_setup_dict(), f)
+
+
 
 class ServerState():
     id_count = 0
@@ -99,3 +114,7 @@ class ServerState():
         self.users = []
         self.save()
 
+   
+    def generate_all_client_setup_files(self):
+        for user in self.users:
+            user.generate_client_setup_file()
