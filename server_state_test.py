@@ -1,4 +1,3 @@
-import server_state
 from server_state import *
 import pytest
 import uuid
@@ -72,5 +71,6 @@ def load_setup(user):
                                 user_name=client_info["user_name"],
                                 n_tickets=client_info["n_tickets"],
                                 secret=client_info["secret"],
+                                symm_key=client_info["symm_key"],
                                 ports=client_info["ports"])
         return setup

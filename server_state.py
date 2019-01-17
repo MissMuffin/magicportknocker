@@ -7,10 +7,11 @@ class ServerStateUser():
     user_name = ""
     n_tickets = 0
     secret = "SECRET"
+    symm_key = "SYMM_KEY"
     ports = []
 
     def __init__(self, user_id, user_name, ports, n_tickets=10,
-                 secret=None):
+                 secret=None, symm_key=None):
         self.user_id = user_id
         self.user_name = user_name
         self.n_tickets = n_tickets
@@ -22,12 +23,19 @@ class ServerStateUser():
         else:
             self.secret = secret
 
+        if symm_key == None:
+            # TODO generate secret
+            self.symm_key = "SYMM_KEY"
+        else:
+            self.symm_key = symm_key
+
     # get dict for saving as json serverside
     def get_dict(self):
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": self.secret,
+                "secret": self.secret, #should be nth ticket
+                "symm_key":self.symm_key,
                 "ports": self.ports}
 
     def get_client_setup_dict(self):
@@ -35,13 +43,14 @@ class ServerStateUser():
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
                 "secret": self.secret,
+                "symm_key":self.symm_key,
                 "ports": self.ports}
 
     def generate_client_setup_file(self):
-        setup_file = "client_setup_{}_{}.json".format(self.user_id, self.user_name)
+        setup_file = "client_setup_{}_{}.json".format(
+            self.user_id, self.user_name)
         with open(setup_file, "w+") as f:
             json.dump(self.get_client_setup_dict(), f)
-
 
 
 class ServerState():
@@ -80,6 +89,7 @@ class ServerState():
                                                   user_name=user["user_name"],
                                                   n_tickets=user["n_tickets"],
                                                   secret=user["secret"],
+                                                  symm_key=user["symm_key"],
                                                   ports=user["ports"]))
             self.id_count = state_dict["id_count"]
 
@@ -114,7 +124,6 @@ class ServerState():
         self.users = []
         self.save()
 
-   
     def generate_all_client_setup_files(self):
         for user in self.users:
             user.generate_client_setup_file()
