@@ -58,7 +58,7 @@ def test_get_user(state):
 def test_generate_client_setup_file(state):
     state.add_user("tim", 6, [56,76])
     user = state.get_user(0)
-    user.test_generate_client_setup()
+    user.generate_client_setup_file()
     setup = load_setup(user)
     assert setup.user_id == user.user_id
     assert user.user_name == setup.user_name
