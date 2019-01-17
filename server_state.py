@@ -5,36 +5,36 @@ import json
 class ServerStateUser():
     user_id = 0
     user_name = ""
-    number_of_tickets = 0
-    verification_key = "SECRET"
+    n_tickets = 0
+    secret = "SECRET"
     ports = []
 
-    def __init__(self, user_id, user_name, ports, number_of_tickets=10,
-                 verification_key=None):
+    def __init__(self, user_id, user_name, ports, n_tickets=10,
+                 secret=None):
         self.user_id = user_id
         self.user_name = user_name
-        self.number_of_tickets = number_of_tickets
+        self.n_tickets = n_tickets
         self.ports = ports
 
-        if verification_key == None:
+        if secret == None:
             # TODO generate secret
-            self.verification_key = "SECRET"
+            self.secret = "SECRET"
         else:
-            self.verification_key = verification_key
+            self.secret = secret
 
     # get dict for saving as json serverside
     def get_dict(self):
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
-                "number_of_tickets": self.number_of_tickets,
-                "verification_key": self.verification_key,
+                "n_tickets": self.n_tickets,
+                "secret": self.secret,
                 "ports": self.ports}
 
     def get_client_setup_dict(self):
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
-                "number_of_tickets": self.number_of_tickets,
-                "verification_key": self.verification_key,
+                "n_tickets": self.n_tickets,
+                "secret": self.secret,
                 "ports": self.ports}
 
     def generate_client_setup_file(self):
@@ -78,16 +78,16 @@ class ServerState():
             for user in state_dict["users"]:
                 self.users.append(ServerStateUser(user_id=user["user_id"],
                                                   user_name=user["user_name"],
-                                                  number_of_tickets=user["number_of_tickets"],
-                                                  verification_key=user["verification_key"],
+                                                  n_tickets=user["n_tickets"],
+                                                  secret=user["secret"],
                                                   ports=user["ports"]))
             self.id_count = state_dict["id_count"]
 
     #  adds new user and saves new user to json
-    def add_user(self, user_name, number_of_tickets, ports):
+    def add_user(self, user_name, n_tickets, ports):
         new_user = ServerStateUser(user_id=self.id_count,
                                    user_name=user_name,
-                                   number_of_tickets=number_of_tickets,
+                                   n_tickets=n_tickets,
                                    ports=ports)
         self.users.append(new_user)
         self.id_count += 1

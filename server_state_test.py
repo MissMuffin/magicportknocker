@@ -62,7 +62,7 @@ def test_generate_client_setup_file(state):
     setup = load_setup(user)
     assert setup.user_id == user.user_id
     assert user.user_name == setup.user_name
-    assert user.verification_key == setup.verification_key
+    assert user.secret == setup.secret
 
 def load_setup(user):
     setup_file = "client_setup_{}_{}.json".format(user.user_id, user.user_name)
@@ -70,7 +70,7 @@ def load_setup(user):
         client_info = json.load(f)
         setup = ServerStateUser( user_id=client_info["user_id"],
                                 user_name=client_info["user_name"],
-                                number_of_tickets=client_info["number_of_tickets"],
-                                verification_key=client_info["verification_key"],
+                                n_tickets=client_info["n_tickets"],
+                                secret=client_info["secret"],
                                 ports=client_info["ports"])
         return setup

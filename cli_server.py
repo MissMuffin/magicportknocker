@@ -23,9 +23,9 @@ def _show_user_table(users):
     
     if isinstance(users, list):
         for user in users:
-            data.append([user.user_id, user.user_name, user.number_of_tickets, " ".join(user.ports)])
+            data.append([user.user_id, user.user_name, user.n_tickets, " ".join(user.ports)])
     else:
-        data.append([users.user_id, users.user_name, users.number_of_tickets, " ".join(users.ports)])
+        data.append([users.user_id, users.user_name, users.n_tickets, " ".join(users.ports)])
 
     table = AsciiTable(data)
     click.echo(table.table)
@@ -38,7 +38,7 @@ def add():
     print(n_tickets)
     ports = click.prompt("Enter port priviliges for user {} (separate port numbers with space)".format(user_name))
     ports = ports.split()
-    state.add_user(user_name=user_name, number_of_tickets=n_tickets, ports=ports) 
+    state.add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
 
 @main.command()
