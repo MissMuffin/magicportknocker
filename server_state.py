@@ -1,6 +1,8 @@
 import os
 import json
 
+auth_port = "234345"
+server_ip = "34.234.234"
 
 class ServerStateUser():
     user_id = 0
@@ -49,8 +51,12 @@ class ServerStateUser():
     def generate_client_setup_file(self):
         setup_file = "client_setup_{}_{}.json".format(
             self.user_id, self.user_name)
+        setup = {}
+        setup["user"] = self.get_client_setup_dict()
+        setup["server_ip"] = server_ip
+        setup["auth_port"] = auth_port
         with open(setup_file, "w+") as f:
-            json.dump(self.get_client_setup_dict(), f)
+            json.dump(setup, f)
 
 
 class ServerState():
@@ -60,6 +66,8 @@ class ServerState():
 
     def __init__(self, id_count=0, users=None, save_file="server_state.json"):
         self.id_count = id_count
+        self.server_ip = server_ip
+        self.auth_port = auth_port
 
         # needs to be None in function head: https://stackoverflow.com/questions/4535667/python-list-should-be-empty-on-class-instance-initialisation-but-its-not-why
         if users == None:

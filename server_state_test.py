@@ -2,6 +2,7 @@ from server_state import *
 import pytest
 import uuid
 
+
 @pytest.fixture
 def state():
     filename = str(uuid.uuid4()) + ".json"
@@ -9,6 +10,7 @@ def state():
     state.remove_all_users()
     yield state
     os.remove(filename)
+
 
 def test_create_and_save(state):
     state.save()
@@ -18,10 +20,12 @@ def test_create_and_save(state):
     assert loaded.id_count == 0 and isinstance(loaded.users, list)
     assert state.id_count == loaded.id_count and state.users == loaded.users
 
+
 def test_add_one(state):
     state.add_user("tim", 10, [1, 2, 3])
     assert state.users[0].user_name == "tim"
     assert state.id_count == 1
+
 
 def test_add_one_and_load(state):
     state.add_user("tim", 10, [1, 2, 3])
@@ -31,9 +35,10 @@ def test_add_one_and_load(state):
     assert loaded.id_count == state.id_count
     assert loaded.users[0].user_name == "tim"
 
+
 def test_remove_user(state):
-    state.add_user("karl", 5, [6,7])
-    state.add_user("zoe", 5, [6,7])
+    state.add_user("karl", 5, [6, 7])
+    state.add_user("zoe", 5, [6, 7])
     for user in state.users:
         if user.user_name == "karl":
             user_id_to_be_removed = user.user_id
@@ -46,31 +51,39 @@ def test_remove_user(state):
     assert len(loaded.users) == len(state.users)
     assert loaded.id_count == state.id_count
 
+
 def test_get_user(state):
-    state.add_user("karl", 5, [6,7])
-    state.add_user("zoe", 5, [6,7])
+    state.add_user("karl", 5, [6, 7])
+    state.add_user("zoe", 5, [6, 7])
     gotten = state.get_user(1)
     assert len(state.users) == 2
     assert gotten != None
     assert gotten.user_name == "zoe"
 
+
 def test_generate_client_setup_file(state):
-    state.add_user("tim", 6, [56,76])
+    state.add_user("tim", 6, [56, 76])
     user = state.get_user(0)
     user.generate_client_setup_file()
-    setup = load_setup(user)
+    setup, server_ip, auth_port = load_setup(user)
     assert setup.user_id == user.user_id
     assert user.user_name == setup.user_name
     assert user.secret == setup.secret
+    assert state.auth_port == auth_port
+    assert state.server_ip == server_ip
+
 
 def load_setup(user):
     setup_file = "client_setup_{}_{}.json".format(user.user_id, user.user_name)
     with open(setup_file, "r") as f:
         client_info = json.load(f)
-        setup = ServerStateUser( user_id=client_info["user_id"],
-                                user_name=client_info["user_name"],
-                                n_tickets=client_info["n_tickets"],
-                                secret=client_info["secret"],
-                                symm_key=client_info["symm_key"],
-                                ports=client_info["ports"])
-        return setup
+        user_info = client_info["user"]
+        user_setup = ServerStateUser(user_id=user_info["user_id"],
+                                user_name=user_info["user_name"],
+                                n_tickets=user_info["n_tickets"],
+                                secret=user_info["secret"],
+                                symm_key=user_info["symm_key"],
+                                ports=user_info["ports"])
+        server_ip = client_info["server_ip"]
+        auth_port = client_info["auth_port"]
+        return user_setup, server_ip, auth_port
