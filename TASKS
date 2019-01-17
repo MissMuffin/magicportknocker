@@ -34,20 +34,21 @@
     - [x] user name
     - [x] number of tickets (n)
     - [x] ports
-    - [ ] digest (first ticket) from hashin the secret n times
+    - [.] digest (first ticket) from hashin the secret n times
+    - [.] symm key for authenticated enryption
 - [.] generate one setup json per user. should contain:
     - [x] user id
-    - [x] server ip + port for authenticating
-    - [ ] secret
+    - [.] secret
     - [x] number of tickets
-    - [ ] pub key for enrypting
-    - [ ] server ip + port for tcp connecting 
+    - [.] symm key for authenticated enryption
+    - [.] server ip + port for tcp connecting 
 - [x] generate setup files for all users
 - [ ] generate user setup files in own sub directory
 - [ ] update user details
     - [ ] change name
     - [ ] generate new priv pub key pair
     - [ ] generate new secret
+    - [ ] generate new symm key
     - [ ] change secret
 - [x] delete all users
 - [x] delete single user by id
