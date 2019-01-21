@@ -1,15 +1,20 @@
 import os
 import json
+import os
+from base64 import b64encode
 
 auth_port = "234345"
 server_ip = "34.234.234"
+rnd_strength = 32 #256 bits
+
+
 
 class ServerStateUser():
     user_id = 0
     user_name = ""
     n_tickets = 0
-    secret = "SECRET"
-    symm_key = "SYMM_KEY"
+    secret = b"SECRET"
+    symm_key = b"SYMM_KEY"
     ports = []
 
     def __init__(self, user_id, user_name, ports, n_tickets=10,
@@ -20,14 +25,15 @@ class ServerStateUser():
         self.ports = ports
 
         if secret == None:
-            # TODO generate secret
-            self.secret = "SECRET"
+            # generate secret
+            # https://docs.python.org/3.5/library/os.html#os.urandom
+            self.secret = b64encode(os.urandom(rnd_strength))
         else:
             self.secret = secret
 
         if symm_key == None:
-            # TODO generate secret
-            self.symm_key = "SYMM_KEY"
+            # generate secret
+            self.symm_key = b64encode(os.urandom(rnd_strength))
         else:
             self.symm_key = symm_key
 
@@ -36,16 +42,16 @@ class ServerStateUser():
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": self.secret, #should be nth ticket
-                "symm_key":self.symm_key,
+                "secret": self.secret.decode(), #should be nth ticket
+                "symm_key":self.symm_key.decode(),
                 "ports": self.ports}
 
     def get_client_setup_dict(self):
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": self.secret,
-                "symm_key":self.symm_key,
+                "secret": self.secret.decode(),
+                "symm_key":self.symm_key.decode(),
                 "ports": self.ports}
 
     def generate_client_setup_file(self):

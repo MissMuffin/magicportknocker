@@ -68,7 +68,7 @@ def test_generate_client_setup_file(state):
     setup, server_ip, auth_port = load_setup(user)
     assert setup.user_id == user.user_id
     assert user.user_name == setup.user_name
-    assert user.secret == setup.secret
+    assert user.secret.decode() == setup.secret
     assert state.auth_port == auth_port
     assert state.server_ip == server_ip
 
