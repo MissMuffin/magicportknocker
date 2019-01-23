@@ -70,14 +70,16 @@ def remove_all():
 
 @main.command()
 def generate_all():
-    """Generate client setup files for all users."""
+    """Generate client setup files for all users. 
+    Automatically overwrites old setup files of a user."""
     state.generate_all_client_setup_files()
     click.echo("Client setup files for all users have been generated.")
 
 @main.command()
 @click.argument("id")
 def generate(id):
-    """Generate client setup files for a single user."""
+    """Generate client setup files for a single user. 
+    Automatically overwrites old setup file for this user."""
     user = state.get_user(int(id))
     if user == None:
         click.echo("No user with this id.")
