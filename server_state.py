@@ -102,8 +102,8 @@ class ServerState():
                 self.users.append(ServerStateUser(user_id=user["user_id"],
                                                   user_name=user["user_name"],
                                                   n_tickets=user["n_tickets"],
-                                                  secret=user["secret"],
-                                                  symm_key=user["symm_key"],
+                                                  secret=user["secret"].encode(),
+                                                  symm_key=user["symm_key"].encode(),
                                                   ports=user["ports"]))
             self.id_count = state_dict["id_count"]
 

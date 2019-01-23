@@ -29,11 +29,14 @@ def test_add_one(state):
 
 def test_add_one_and_load(state):
     state.add_user("tim", 10, [1, 2, 3])
+    tim = state.get_user(0)
     loaded = ServerState(save_file=state._save_file)
     loaded.load()
+    loaded_tim = loaded.get_user(0)
     assert len(loaded.users) == len(state.users)
     assert loaded.id_count == state.id_count
-    assert loaded.users[0].user_name == "tim"
+    assert loaded_tim.user_name == tim.user_name
+    assert loaded_tim.symm_key == tim.symm_key
 
 
 def test_remove_user(state):
@@ -68,7 +71,7 @@ def test_generate_client_setup_file(state):
     setup, server_ip, auth_port = load_setup(user)
     assert setup.user_id == user.user_id
     assert user.user_name == setup.user_name
-    assert user.secret.decode() == setup.secret
+    assert user.symm_key == setup.symm_key
     assert state.auth_port == auth_port
     assert state.server_ip == server_ip
 
@@ -80,10 +83,10 @@ def load_setup(user):
         user_info = client_info["user"]
         user_setup = ServerStateUser(user_id=user_info["user_id"],
                                 user_name=user_info["user_name"],
+                                ports=user_info["ports"],
                                 n_tickets=user_info["n_tickets"],
-                                secret=user_info["secret"],
-                                symm_key=user_info["symm_key"],
-                                ports=user_info["ports"])
+                                secret=user_info["secret"].encode(),
+                                symm_key=user_info["symm_key"].encode())
         server_ip = client_info["server_ip"]
         auth_port = client_info["auth_port"]
         return user_setup, server_ip, auth_port
