@@ -55,7 +55,7 @@ class ServerStateUser():
                 "ports": self.ports}
 
     def generate_client_setup_file(self):
-        setup_file = "client_setup_{}_{}.json".format(
+        setup_file = "user_setups/client_setup_{}_{}.json".format(
             self.user_id, self.user_name)
         setup = {}
         setup["user"] = self.get_client_setup_dict()
