@@ -51,8 +51,7 @@ class ClientState():
                                 auth_port=client_info["auth_port"])
             return state
 
-    def save(self):
-        setup_file = "client_state.json"
+    def save(self, save_file="client_state.json"):
         setup = self.get_dict()
-        with open(setup_file, "w+") as f:
+        with open(save_file, "w+") as f:
             json.dump(setup, f)
