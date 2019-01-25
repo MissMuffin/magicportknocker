@@ -36,8 +36,9 @@ class ClientState():
                 "server_ip": self.server_ip,
                 "auth_port": self.auth_port}
 
-    def load(self):
-        with open(self._save_file, "r") as f:
+    @staticmethod
+    def load(save_file):
+        with open(save_file, "r") as f:
             client_info = json.load(f)
             user_info = client_info["user"]
             state = ClientState( user_id=user_info["user_id"],
