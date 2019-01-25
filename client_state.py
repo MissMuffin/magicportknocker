@@ -44,8 +44,8 @@ class ClientState():
             state = ClientState( user_id=user_info["user_id"],
                                 user_name=user_info["user_name"],
                                 n_tickets=user_info["n_tickets"],
-                                secret=user_info["secret"],
-                                symm_key=user_info["symm_key"],
+                                secret=user_info["secret"].encode(),
+                                symm_key=user_info["symm_key"].encode(),
                                 ports=user_info["ports"],
                                 server_ip=client_info["server_ip"],
                                 auth_port=client_info["auth_port"])
