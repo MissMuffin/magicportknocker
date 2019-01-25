@@ -90,6 +90,7 @@ def generate(id):
 
 if __name__ == "__main__":    
     # do setup here for commands
+    # TODO look into context
     state = ServerState()
     try:
         state.load()
