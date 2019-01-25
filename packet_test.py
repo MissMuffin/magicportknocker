@@ -3,7 +3,7 @@ import pytest
 import cryptography.exceptions
 
 def test_good():
-    secret = "sdfsdhgh"
+    secret = b"sdfsdhgh"
     ticket = b"t"
     ip = "2"
 
@@ -14,7 +14,7 @@ def test_good():
     assert unpacked.ticket == ticket and unpacked.ip == ip  
 
 def test_bad_signature():
-    secret = "secret"
+    secret = b"secret"
     ticket = b"t"
     ip = "2"
 
@@ -23,4 +23,4 @@ def test_bad_signature():
 
 
     with pytest.raises(cryptography.exceptions.InvalidSignature):
-        Packet.unpack("differnt_secret", buffer)
+        Packet.unpack(b"differnt_secret", buffer)
