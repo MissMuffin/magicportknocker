@@ -1,17 +1,17 @@
 # CLIENT 
-- [ ] do setup with json from admin
+- [x] do setup with json from admin
 - [x] hash number x times and keep in list[x]
 - [ ] send udp packet (3 times in case it gets lost?)
     - [x] 99th hash (= ticket)
     - [x] ip (ipv4, ipv6)
     - [ ] (port opening duration)
     - [x] signature
-- [ ] try to tcp connect to port z 
+- [ ] try to tcp connect to authorized port(s) 
     - [ ] succes: yay
     - [ ] failure: (5 sec without connection) resend udp packets
 
 # SERVER
-- [ ] read list of users and their details
+- [x] read list of users and their details
 - [x] listen on port y for udp from client
 - [ ] when receiving packet:
     - [ ] verify signature
@@ -25,9 +25,9 @@
 # ADMIN
 - [x] enter number of tickets n
 - [x] enter list of users with corresponding privileges (multiple users can have the same port)
-- [ ] generate:
-    - [ ] a symmetric key per user for authenticated encryption (one pair per user so that if one user is hacked, it wont compromise the all other users' signatures)
-    - [ ] secret
+- [.] generate:
+    - [x] a symmetric key per user for authenticated encryption (one pair per user so that if one user is hacked, it wont compromise the all other users' signatures)
+    - [x] secret
     - [ ] first ticket (secret hashed n times)
 - [.] save to server config file for each user:
     - [x] user id
@@ -35,15 +35,15 @@
     - [x] number of tickets (n)
     - [x] ports
     - [.] digest (first ticket) from hashin the secret n times
-    - [.] symm key for authenticated enryption
+    - [x] symm key for authenticated enryption
 - [.] generate one setup json per user. should contain:
     - [x] user id
-    - [.] secret
+    - [x] secret
     - [x] number of tickets
-    - [.] symm key for authenticated enryption
+    - [x] symm key for authenticated enryption
     - [.] server ip + port for tcp connecting 
 - [x] generate setup files for all users
-- [ ] generate user setup files in own sub directory
+- [.] generate user setup files in own sub directory
 - [ ] update user details
     - [ ] change name
     - [ ] generate new priv pub key pair

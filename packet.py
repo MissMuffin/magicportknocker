@@ -26,7 +26,7 @@ class Packet(object):
             self.new_ticket = new_ticket
 
     def pack(self, secret):
-        # TODO secret should ideally be 256 bits
+        # TODO secret should ideally be 256 bits?
         # encoding defaults to utf8
         # secret is type: b""
         encoded_ip = self.ip.encode()
