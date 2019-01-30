@@ -10,6 +10,16 @@ try:
 except FileNotFoundError:
     print("Save file not found.")
 
+def key_finder(user_id):
+    # check if user exists
+    user_state = state.get_user(user_id)
+
+    if user_state == None:
+        # TODO log auth attempt
+        raise Exception("User does not exist")
+    
+    return user_state.symm_key
+
 # Create a UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -21,33 +31,30 @@ print('\nlistening...')
 
 while True:
     payload, address = sock.recvfrom(4096) # cant trust this address
+    print('received {} bytes from {}'.format(len(payload), address))
 
-    # unpack
-    ct, user_id = Packet.unpack(payload)
-
-    # check if user exists
-    user_state = state.get_user(user_id)
-
-    if user_state == None:
-        # TODO log auth attempt
-        print("user does not exist")
+    # try unpacking
+    try:
+        packet = Packet.unpack(payload, key_finder)
+    except Exception as e:
+        print(e)
+        # TODO add logging
         continue
 
-    # try decrypting
-    ticket, ip, new_ticket = Packet.decrypt(user_state, ct)
+    # get user state
+    user_state = state.get_user(packet.user_id)
 
     # check for correct ticket
-    if verify_ticket(received_ticket=ticket, server_ticket=user_state.secret):
+    if verify_ticket(received_ticket=packet.ticket, server_ticket=user_state.secret):
 
         # update server state and save
-        user_state.secret = ticket
-        user_state.number_of_remaining_tickets -= 1
-        state.save()
+        # user_state.secret = packet.ticket
+        # user_state.number_of_remaining_tickets -= 1
+        # state.save()
 
         # emulate open ports
-        print('received {} bytes from {}'.format(len(ct), address))
         print("ticket was correct")
-        print("client ip:", ip)
+        print("client ip:", packet.ip)
         print("authorized ports: {}".format(str(user_state.ports)))
 
     else:

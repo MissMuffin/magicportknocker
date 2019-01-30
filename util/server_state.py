@@ -2,12 +2,12 @@ import os
 import json
 from base64 import b64encode
 from pathlib2 import Path
+from util.auth import generate_secret
 
 cwd = os.getcwd()
 
 auth_port = "10000"
 server_ip = "localhost"
-rnd_strength = 32
 
 class ServerStateUser():
     user_id = 0
@@ -24,21 +24,16 @@ class ServerStateUser():
         self.n_tickets = n_tickets
         self.ports = ports
 
+        self.secret = secret
         if secret == None:
-            # generate secret
-            # https://docs.python.org/3.5/library/os.html#os.urandom
-            self.secret = b64encode(os.urandom(rnd_strength))
-        else:
-            self.secret = secret
-
+            self.secret = generate_secret()
+        
+        self.symm_key = symm_key
         if symm_key == None:
-            # generate secret
-            self.symm_key = b64encode(os.urandom(rnd_strength))
-        else:
-            self.symm_key = symm_key
-
-    # get dict for saving as json serverside
+            self.symm_key = generate_secret()
+        
     def get_dict(self):
+        # get dict for saving as json serverside
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,

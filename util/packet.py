@@ -9,42 +9,42 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from util.auth import generate_nth_token
 from util.client_state import ClientState
 from util.server_state import ServerStateUser
-
+import os
 
 class Packet(object):
 
-    ip = "" # type: String
-    state = None # type: ClientState
-    new_ticket = None
+    ip = ""
+    user_id = None
+    ticket = b""
+    new_ticket = b""
 
-    def __init__(self, state, ip, new_ticket=None):
+    def __init__(self, ip, user_id, ticket, new_ticket=None):
         self.ip = ip
-        self.state = state
+        self.user_id = user_id
+        self.ticket = ticket
         if new_ticket != None:
             self.new_ticket = new_ticket
 
-    def _encrypt(self):
-        encoded_ip = self.ip.encode()
-        ticket = generate_nth_token(self.state.secret, self.state.n_tickets)
-        buffer = netstruct.pack(b'!b$b$b$', ticket, self.new_ticket, encoded_ip)
+    def _encrypt(self, symm_key):
+        buffer = netstruct.pack(b'!b$b$b$', self.ticket, self.new_ticket, self.ip.encode())
+        aesgcm = AESGCM(symm_key)
+        nonce = os.urandom(32)
+        return aesgcm.encrypt(nonce, buffer, self.user_id), nonce
 
-        aesgcm = AESGCM(self.state.symm_key)
-        nonce = generate_nth_token(self.state.secret, self.state.n_tickets + 1)
-        return aesgcm.encrypt(nonce, buffer, b"")
-
-    def pack(self):
-        ct = self._encrypt()
-        return netstruct.pack(b'!b$b$', ct, self.state.user_id)
+    def pack(self, symm_key):
+        ct, nonce = self._encrypt(symm_key)
+        return netstruct.pack(b'!b$b$b$', ct, nonce, self.user_id)
     
     @staticmethod
-    def decrypt(user_state, ct):
-        nonce = user_state.secret
-        aesgcm = AESGCM(user_state.symm_key)
+    def _decrypt(ct, nonce, symm_key):
+        aesgcm = AESGCM(symm_key)
         buffer = aesgcm.decrypt(nonce, ct, b"")
         ticket, new_ticket, ip = netstruct.unpack(b'!b$b$b$', buffer)
         return ticket, ip.decode(), new_ticket
 
     @staticmethod
-    def unpack(payload):
-        ct, user_id = netstruct.unpack(b'!b$b$', payload)
-        return ct, user_id
+    def unpack(payload, key_finder):
+        ct, nonce, user_id = netstruct.unpack(b'!b$b$b$', payload)
+        symm_key = key_finder(user_id)
+        ticket, ip, new_ticket = Packet._decrypt(ct, nonce, symm_key)
+        return Packet(ip, user_id, ticket, new_ticket)

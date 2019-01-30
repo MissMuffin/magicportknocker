@@ -1,5 +1,7 @@
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
+import os
+from base64 import b64encode
 
 def hash(hash_input): 
     digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
@@ -25,3 +27,6 @@ def generate_nth_token(seed, n):
         ticket = hash(ticket)
 
     return ticket
+
+def generate_secret():
+    return b64encode(os.urandom(32))
