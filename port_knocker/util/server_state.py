@@ -2,7 +2,7 @@ import os
 import json
 from base64 import b64encode
 from pathlib2 import Path
-from util.auth import generate_secret
+from .auth import generate_secret
 
 cwd = os.getcwd()
 

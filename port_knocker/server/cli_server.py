@@ -1,8 +1,8 @@
 import socket
 import sys
-from util.packet import Packet
-from util.auth import verify_ticket
-from util.server_state import ServerState
+from port_knocker.util.packet import Packet
+from port_knocker.util.auth import verify_ticket
+from port_knocker.util.server_state import ServerState
 
 state = ServerState()
 try:

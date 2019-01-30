@@ -1,6 +1,6 @@
 import click
 import requests
-from util.server_state import ServerState
+from port_knocker.util.server_state import ServerState
 from terminaltables import AsciiTable
 
 state = None # type: ServerState

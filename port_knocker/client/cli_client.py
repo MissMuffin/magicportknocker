@@ -1,10 +1,10 @@
-from util.client_state import ClientState
+from port_knocker.util.client_state import ClientState
 import click
 import socket
 import sys
-from util.packet import Packet
+from port_knocker.util.packet import Packet
 import requests
-from util.auth import generate_nth_token, generate_secret
+from port_knocker.util.auth import generate_nth_token, generate_secret
 import time
 import os
 

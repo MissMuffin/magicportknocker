@@ -1,4 +1,4 @@
-from util.packet import *
+from .packet import *
 import pytest
 import cryptography.exceptions
 from base64 import b64encode
