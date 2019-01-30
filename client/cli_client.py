@@ -15,7 +15,7 @@ except:
     click.echo("Save file not found.")
 
 # create packet to send
-ip = requests.get('http://ip.42.pl/raw').text
+ip = requests.get('http://ip.42.pl/raw').text #https://stackoverflow.com/a/42042827
 p = Packet(state, ip)
 to_send = p.pack()
 
