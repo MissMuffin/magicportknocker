@@ -1,6 +1,6 @@
 import click
 import requests
-from server_state import ServerState
+from util.server_state import ServerState
 from terminaltables import AsciiTable
 
 state = None # type: ServerState
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     state = ServerState()
     try:
         state.load()
-    except Exception:
+    except:
         pass
     
     main()

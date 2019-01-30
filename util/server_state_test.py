@@ -1,4 +1,4 @@
-from server_state import *
+from util.server_state import *
 import pytest
 import uuid
 

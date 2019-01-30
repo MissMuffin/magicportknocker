@@ -1,13 +1,13 @@
 import os
 import json
-import os
 from base64 import b64encode
+from pathlib2 import Path
 
-auth_port = "234345"
-server_ip = "34.234.234"
-rnd_strength = 32 #256 bits
+cwd = os.getcwd()
 
-
+auth_port = "10000"
+server_ip = "localhost"
+rnd_strength = 32
 
 class ServerStateUser():
     user_id = 0
@@ -55,12 +55,17 @@ class ServerStateUser():
                 "ports": self.ports}
 
     def generate_client_setup_file(self):
+        # check if dir for setup files exists
+        Path(cwd + "/user_setups").mkdir(exist_ok=True)
+        # build file path
         setup_file = "user_setups/client_setup_{}_{}.json".format(
             self.user_id, self.user_name)
+        # create dict with setup data to be saved to json
         setup = {}
         setup["user"] = self.get_client_setup_dict()
         setup["server_ip"] = server_ip
         setup["auth_port"] = auth_port
+        # write to file
         with open(setup_file, "w+") as f:
             json.dump(setup, f)
 

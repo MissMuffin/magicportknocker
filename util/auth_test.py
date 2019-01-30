@@ -1,4 +1,4 @@
-from auth import *
+from util.auth import *
 
 seed = "dsfsdf"
 
