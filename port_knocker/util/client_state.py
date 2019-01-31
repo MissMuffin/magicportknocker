@@ -1,5 +1,5 @@
 import json
-
+from base64 import b64encode, b64decode
 
 class ClientState():
     _save_file = None
@@ -29,8 +29,8 @@ class ClientState():
         user_info = {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": self.secret.decode(),
-                "symm_key":self.symm_key.decode(),
+                "secret": b64encode(self.secret).decode(),
+                "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
         return {"user": user_info,
                 "server_ip": self.server_ip,
@@ -44,8 +44,8 @@ class ClientState():
             state = ClientState( user_id=user_info["user_id"],
                                 user_name=user_info["user_name"],
                                 n_tickets=user_info["n_tickets"],
-                                secret=user_info["secret"].encode(),
-                                symm_key=user_info["symm_key"].encode(),
+                                secret=b64decode(user_info["secret"]),
+                                symm_key=b64decode(user_info["symm_key"]),
                                 ports=user_info["ports"],
                                 server_ip=client_info["server_ip"],
                                 auth_port=client_info["auth_port"])

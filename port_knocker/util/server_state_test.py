@@ -1,6 +1,7 @@
 from .server_state import *
 import pytest
 import uuid
+import base64
 
 
 @pytest.fixture
@@ -85,8 +86,8 @@ def load_setup(setup_file):
                                 user_name=user_info["user_name"],
                                 ports=user_info["ports"],
                                 n_tickets=user_info["n_tickets"],
-                                secret=user_info["secret"].encode(),
-                                symm_key=user_info["symm_key"].encode())
+                                secret=base64.b64decode(user_info["secret"]),
+                                symm_key=base64.b64decode(user_info["symm_key"]))
         server_ip = client_info["server_ip"]
         auth_port = client_info["auth_port"]
         return user_setup, server_ip, auth_port

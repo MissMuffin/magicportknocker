@@ -6,9 +6,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from auth import generate_nth_token
-from client_state import ClientState
-from server_state import ServerStateUser
+from .auth import generate_nth_token
 import os
 
 class Packet(object):

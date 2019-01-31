@@ -38,6 +38,7 @@ def add():
     print(n_tickets)
     ports = click.prompt("Enter port priviliges for user {} (separate port numbers with space)".format(user_name))
     ports = ports.split()
+    # TODO check that port in range?
     state.add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
 

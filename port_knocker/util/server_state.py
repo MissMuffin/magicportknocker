@@ -1,8 +1,8 @@
 import os
 import json
-from base64 import b64encode
+from base64 import b64encode, b64decode
 from pathlib2 import Path
-from .auth import generate_secret
+from .auth import generate_secret, generate_nth_token
 
 cwd = os.getcwd()
 
@@ -37,16 +37,16 @@ class ServerStateUser():
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": self.secret.decode(), #should be nth ticket
-                "symm_key":self.symm_key.decode(),
+                "secret": b64encode(generate_nth_token(self.secret, self.n_tickets + 1)).decode(),
+                "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
 
     def get_client_setup_dict(self):
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": self.secret.decode(),
-                "symm_key":self.symm_key.decode(),
+                "secret": b64encode(self.secret).decode(),
+                "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
 
     def generate_client_setup_file(self):
@@ -89,7 +89,6 @@ class ServerState():
         state["id_count"] = self.id_count
         state["users"] = []
         for user in self.users:
-            # state["users"].append(user.__dict__)  # .get_dict()
             state["users"].append(user.get_dict())
         with open(self._save_file, "w+") as f:
             json.dump(state, f)
@@ -102,8 +101,8 @@ class ServerState():
                 self.users.append(ServerStateUser(user_id=user["user_id"],
                                                   user_name=user["user_name"],
                                                   n_tickets=user["n_tickets"],
-                                                  secret=user["secret"].encode(),
-                                                  symm_key=user["symm_key"].encode(),
+                                                  secret=b64decode(user["secret"]),
+                                                  symm_key=b64decode(user["symm_key"]),
                                                   ports=user["ports"]))
             self.id_count = state_dict["id_count"]
 
