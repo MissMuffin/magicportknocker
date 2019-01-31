@@ -16,7 +16,7 @@ def key_finder(user_id):
 
     if user_state == None:
         # TODO log auth attempt
-        raise Exception("User does not exist")
+        raise Exception("User {user_id} does not exist".format(user_id=user_id))
     
     return user_state.symm_key
 
@@ -41,6 +41,8 @@ while True:
         # TODO add logging
         continue
 
+    # print(packet)
+    
     # get user state
     user_state = state.get_user(packet.user_id)
 

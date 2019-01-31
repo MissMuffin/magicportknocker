@@ -1,5 +1,15 @@
 from .auth import *
 
+def generate_tokens(secret, number_of_tokens):
+    tickets = list()
+    # init first entry
+    tickets.append(hash(secret))
+
+    for _ in range(number_of_tokens - 1):
+        tickets.append(hash(tickets[-1]))
+
+    return tickets
+
 def test_generate_nth_token():
     n = 14
     seed = generate_secret()

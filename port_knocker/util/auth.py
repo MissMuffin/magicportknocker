@@ -10,19 +10,8 @@ def hash(hash_input):
 def verify_ticket(received_ticket, server_ticket):
     return hash(received_ticket) == server_ticket
 
-def generate_tokens(secret, number_of_tokens):
-    tickets = list()
-    # init first entry
-    tickets.append(hash(secret))
-
-    for i in range(number_of_tokens - 1):
-        tickets.append(hash(tickets[-1]))
-
-    return tickets
-
-def generate_nth_token(secret, n):
-    ticket = hash(secret)
-    for i in range(n - 1):
+def generate_nth_token(ticket, n):
+    for _ in range(n):
         ticket = hash(ticket)
 
     return ticket
