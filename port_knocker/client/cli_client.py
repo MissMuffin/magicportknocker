@@ -17,6 +17,20 @@ try:
 except:
     click.echo("Save file not found.")
 
+def try_tcp(server_ip, port, timeout=1.0):
+    # trying establishing tcp connecktion to authorized port
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(timeout)
+    try:
+        sock.connect((server_ip, port))
+        return True
+    except:
+        return False
+    finally:
+        sock.close()
+    
+
+
 # create packet to send
 ip = requests.get('https://ip.blacknode.se').text
 ticket = generate_nth_token(state.secret, state.n_tickets)
@@ -28,14 +42,17 @@ payload = p.pack(state.symm_key)
 
 # create udp socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-for i in range(10):
+for i in range(10):    
     sock.sendto(payload, ("localhost", 10000))
-    time.sleep(0.25 * i * 3)
+    timeout = 0.25 * i * 3
+    if try_tcp(state.server_ip, int(state.ports[0])):
+        print('Success! Ports are now open!')
+        break
+    else:
+        print("retrying in {timeout} seconds...".format(timeout=timeout))
+        time.sleep(timeout)
 sock.close()
 
-# trying establishing tcp connecktion to authorized port
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# sock.connect((state.server_ip, state.ports[-1]))
 
 
 # try authentication with n-1 ticket

@@ -48,7 +48,6 @@ while True:
 
     # check for correct ticket
     if verify_ticket(received_ticket=packet.ticket, server_ticket=user_state.secret):
-
         # update server state and save
         # user_state.secret = packet.ticket
         # user_state.number_of_remaining_tickets -= 1
