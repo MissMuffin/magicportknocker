@@ -114,7 +114,8 @@ class ServerState():
                                    ports=ports)
         self.users.append(new_user)
         self.id_count += 1
-        self.save()
+        new_user.generate_client_setup_file()
+        self.save() 
 
     def get_user(self, user_id):
         for i, user in enumerate(self.users):

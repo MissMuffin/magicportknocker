@@ -42,6 +42,7 @@ def add():
     state.add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
 
+
 @main.command()
 def view():
     """View all users and their priviliges."""
@@ -69,25 +70,6 @@ def remove_all():
         state.remove_all_users()
         click.echo("Removed {} users.".format(n_users))
 
-@main.command()
-def generate_all():
-    """Generate client setup files for all users. 
-    Automatically overwrites old setup files of a user."""
-    state.generate_all_client_setup_files()
-    click.echo("Client setup files for all users have been generated.")
-
-@main.command()
-@click.argument("id")
-def generate(id):
-    """Generate client setup files for a single user. 
-    Automatically overwrites old setup file for this user."""
-    user = state.get_user(int(id))
-    if user == None:
-        click.echo("No user with this id.")
-    else:
-        user.generate_client_setup_file()
-        # TODO error handling?
-        click.echo("Client setup file has been generated.")
 
 if __name__ == "__main__":    
     # do setup here for commands
