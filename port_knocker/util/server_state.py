@@ -2,7 +2,7 @@ import os
 import json
 from base64 import b64encode, b64decode
 from pathlib2 import Path
-from .auth import generate_secret, generate_nth_token
+from .auth import generate_secret, generate_nth_ticket
 
 cwd = os.getcwd()
 
@@ -37,7 +37,7 @@ class ServerStateUser():
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": b64encode(generate_nth_token(self.secret, self.n_tickets + 1)).decode(),
+                "secret": b64encode(generate_nth_ticket(self.secret, self.n_tickets + 1)).decode(),
                 "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
 

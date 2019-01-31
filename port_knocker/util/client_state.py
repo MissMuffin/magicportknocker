@@ -55,3 +55,15 @@ class ClientState():
         setup = self.get_dict()
         with open(save_file, "w+") as f:
             json.dump(setup, f)
+
+    def update_state(self, n_ticket_sent, new_secret, new_n):
+        if self.n_tickets <= 2:
+            self.n_tickets = new_n
+            self.secret = new_secret
+        else:
+            self.n_tickets -= n_ticket_sent
+        self.save() # TODO save here of in cli?
+
+    def remaining_tickets(self):
+        for i in range(self.n_tickets):
+            yield self.n_tickets - i

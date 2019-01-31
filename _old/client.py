@@ -15,7 +15,7 @@ except FileNotFoundError:
     state = State(secret, number_of_tickets)
     state.save()
 
-ticket = auth.generate_nth_token(state.secret, state.number_of_remaining_tickets)
+ticket = auth.generate_nth_ticket(state.secret, state.number_of_remaining_tickets)
 ip = "1"
 server_address = ('localhost', 10000)
 p = packet.Packet(ticket, ip)

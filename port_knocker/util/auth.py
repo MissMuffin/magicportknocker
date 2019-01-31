@@ -10,7 +10,7 @@ def hash(hash_input):
 def verify_ticket(received_ticket, server_ticket):
     return hash(received_ticket) == server_ticket
 
-def generate_nth_token(ticket, n):
+def generate_nth_ticket(ticket, n):
     for _ in range(n):
         ticket = hash(ticket)
 

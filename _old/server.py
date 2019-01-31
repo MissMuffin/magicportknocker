@@ -15,7 +15,7 @@ except FileNotFoundError:
     state = State(secret, number_of_tickets)
     state.save()
 
-ticket = auth.generate_nth_token(state.secret, state.number_of_remaining_tickets + 1)
+ticket = auth.generate_nth_ticket(state.secret, state.number_of_remaining_tickets + 1)
 
 # Create a UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
