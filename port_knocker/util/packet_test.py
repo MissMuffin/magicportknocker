@@ -3,28 +3,27 @@ import pytest
 import cryptography.exceptions
 from base64 import b64encode
 import os
+from .auth import *
 
 def test_good():
-#     secret = b64encode(os.urandom(32))
-#     ticket = b64encode(os.urandom(32))
-#     ip = "2"
+    user_id = 89
+    ip = "2"
+    ticket = generate_secret()
+    new_ticket = generate_secret()
+    new_n = 9
+    symm_key = generate_secret()
 
-#     p = Packet(ticket, ip)
-#     buffer = p.pack(secret)
+    p = Packet(ip, user_id, ticket, new_ticket, new_n)
+    payload = p.pack(symm_key)
 
-#     unpacked = Packet.unpack(secret, buffer)
-#     assert unpacked.ticket == ticket and unpacked.ip == ip
-    pass
+    def fake_key_finder(_):
+        return symm_key
 
-def test_bad_signature():
-#     secret = b"secret"
-#     ticket = b"t"
-#     ip = "2"
+    rec_p = Packet.unpack(payload, fake_key_finder)
 
-#     p = Packet(ticket, ip)
-#     buffer = p.pack(secret)
+    assert rec_p.user_id == user_id
+    assert rec_p.ip == ip
+    assert rec_p.ticket == ticket
+    assert rec_p.new_ticket == new_ticket
+    assert rec_p.new_n == new_n
 
-
-#     with pytest.raises(cryptography.exceptions.InvalidSignature):
-#         Packet.unpack(b"differnt_secret", buffer)
-        pass
