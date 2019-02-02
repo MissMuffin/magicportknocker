@@ -4,7 +4,6 @@ from base64 import b64encode, b64decode
 from pathlib2 import Path
 from .auth import generate_secret, generate_nth_ticket
 
-cwd = os.getcwd()
 
 auth_port = "10000"
 server_ip = "localhost"
@@ -50,11 +49,12 @@ class ServerStateUser():
                 "ports": self.ports}
 
     def generate_client_setup_file(self):
-        # check if dir for setup files exists
-        Path(cwd + "/user_setups").mkdir(exist_ok=True)
+        # check if dir for user exists
+        cwd = os.getcwd()
+        folder_path = cwd + "/user_setups/{}_{}".format(self.user_id, self.user_name)
+        Path(folder_path).mkdir(exist_ok=True) #TODO escape name?
         # build file path
-        setup_file = "user_setups/client_setup_{}_{}.json".format(
-            self.user_id, self.user_name)
+        setup_file = folder_path + "/save_file.json"
         # create dict with setup data to be saved to json
         setup = {}
         setup["user"] = self.get_client_setup_dict()
