@@ -1,5 +1,6 @@
 import iptc
 from elevate import elevate
+from port_knocker.util.security_logger import sec_logger
 
 # add user port privileges to iptables (after successful authentication)
 def open_ports(ip, ports):
@@ -19,6 +20,7 @@ def open_ports(ip, ports):
                 pass
             chain.insert_rule(rule)
     table.commit()
+    sec_logger.info("opened ports {}".format(ports))
 
 if __name__ == '__main__':
     # elevate this to root
