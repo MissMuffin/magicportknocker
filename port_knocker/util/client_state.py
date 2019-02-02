@@ -51,13 +51,13 @@ class ClientState():
                                 auth_port=client_info["auth_port"])
             return state
 
-    def save(self, save_file="client_state.json"):
+    def save(self, save_file="save_file.json"):
         setup = self.get_dict()
         with open(save_file, "w+") as f:
             json.dump(setup, f)
 
     def update_state(self, n_ticket_sent, new_secret, new_n):
-        if self.n_tickets <= 2:
+        if new_n > 0:
             self.n_tickets = new_n
             self.secret = new_secret
         else:

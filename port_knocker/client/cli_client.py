@@ -11,7 +11,7 @@ import base64
 
 # check if save file exists
 # note: save file and setup file have identical structure
-save_file = "client_state.json"
+save_file = "save_file.json"
 state = None # type: ClientState
 try:
     state = ClientState.load(save_file)
@@ -51,7 +51,6 @@ if state.n_tickets == 2:
 def create_payload():
     # generate ticket
     ticket = generate_nth_ticket(state.secret, next(remaining_tickets))
-
     # create packet to send
     p = Packet(public_ip, state.user_id, ticket, new_ticket, new_n)
     return p.pack(state.symm_key)

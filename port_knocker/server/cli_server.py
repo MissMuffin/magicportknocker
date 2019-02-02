@@ -48,15 +48,20 @@ while True:
 
     # check for correct ticket
     if verify_ticket(received_ticket=packet.ticket, server_ticket=user_state.secret):
+
         # update server state and save
-        user_state.secret = packet.ticket
-        user_state.n_tickets -= 1
+        if packet.new_n > 0:
+            user_state.n_tickets = packet.new_n
+            user_state.secret = packet.new_ticket   
+        else:
+            user_state.secret = packet.ticket
+            user_state.n_tickets -= 1
         state.save()
 
         # emulate open ports
         print("ticket was correct")
         print("client ip:", packet.ip)
-        print("authorized ports: {}".format(str(user_state.ports)))
+        print("authorized ports: {}\n".format(str(user_state.ports)))
 
     else:
         print("authentication failed")
