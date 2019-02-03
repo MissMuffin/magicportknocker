@@ -31,7 +31,7 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # Bind the socket to the port
-    server_address = ('localhost', 13337)
+    server_address = ('0.0.0.0', 13337)
     sock.bind(server_address)
     logging.info('listening on {} port {}'.format(*server_address))
     logging.info('listening...')
