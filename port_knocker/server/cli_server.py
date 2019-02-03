@@ -4,6 +4,7 @@ from port_knocker.util.packet import Packet
 from port_knocker.util.auth import verify_ticket
 from port_knocker.util.server_state import ServerState
 from port_knocker.util.security_logger import sec_logger
+from port_knocker.server.iptables import open_ports
 import logging
 
 def main():
@@ -30,7 +31,7 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # Bind the socket to the port
-    server_address = ('localhost', 10000)
+    server_address = ('localhost', 13337)
     sock.bind(server_address)
     logging.info('listening on {} port {}'.format(*server_address))
     logging.info('listening...')
@@ -67,7 +68,7 @@ def main():
             logging.info("ticket was correct")
             logging.info("client ip: {}".format(packet.ip))
             logging.info("authorized ports: {}\n".format(str(user_state.ports)))
-
+            open_ports(packet.ip, user_state.ports)
         else:
             sec_logger.warn("authentication failed for {} ({})".format(user_state.user_name, user_state.user_id))
 
