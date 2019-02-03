@@ -62,7 +62,7 @@ class ServerStateUser():
         setup["auth_port"] = auth_port
         # write to file
         with open(setup_file, "w+") as f:
-            json.dump(setup, f)
+            json.dump(setup, f, indent=4)
 
 
 class ServerState():
@@ -91,7 +91,7 @@ class ServerState():
         for user in self.users:
             state["users"].append(user.get_dict())
         with open(self._save_file, "w+") as f:
-            json.dump(state, f)
+            json.dump(state, f, indent=4)
 
     # loads user id count and user data from json
     def load(self):

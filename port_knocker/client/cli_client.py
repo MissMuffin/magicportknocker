@@ -38,6 +38,7 @@ def main():
 
     # query server for public ip address
     public_ip = requests.get('https://ip.blacknode.se').text
+    public_ip = '192.168.0.2'
 
     # generator for remaining tickets
     # remaining_tickets = state.remaining_tickets()
@@ -82,7 +83,7 @@ def main():
         # create payload
         payload = create_payload(n)
         for i in range(5):    
-            sock.sendto(payload, ("localhost", 10000))
+            sock.sendto(payload, (state.server_ip, state.auth_port))
             timeout = 0.25 * i * 3
             if try_tcp(state.server_ip, int(state.ports[0])):
                 print('Success! Ports are now open!')

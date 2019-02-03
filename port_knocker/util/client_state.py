@@ -22,7 +22,7 @@ class ClientState():
         self.secret = secret
         self.symm_key = symm_key
         self.server_ip = server_ip
-        self.auth_port = auth_port
+        self.auth_port = int(auth_port)
 
     def get_dict(self):
         # same structure as setup file for simplicity
@@ -54,7 +54,7 @@ class ClientState():
     def save(self, save_file="save_file.json"):
         setup = self.get_dict()
         with open(save_file, "w+") as f:
-            json.dump(setup, f)
+            json.dump(setup, f, indent=4)
 
     def update_state(self, n_ticket_sent, new_secret, new_n):
         if new_n > 0:
