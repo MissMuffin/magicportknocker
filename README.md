@@ -4,6 +4,10 @@
 
 pip install -e .
 
+pip3 install -U --user "git+https://github.com/fyyree/magicportknocker#egg=port-knocker"
+
+## 
+
 ## Run Admin
 python -m port_knocker.server.cli_admin
 

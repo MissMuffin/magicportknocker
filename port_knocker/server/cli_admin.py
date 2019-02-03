@@ -6,7 +6,8 @@ from terminaltables import AsciiTable
 state = None # type: ServerState
 
 @click.group()
-def main():
+@click.pass_context
+def cli(ctx):
     """
     \b
     Simple CLI for admin crud operations:
@@ -15,7 +16,12 @@ def main():
         remove user
         generate client setup files for users
     """
-    pass
+    state = ServerState()
+    try:
+        state.load()
+    except:
+        pass
+    ctx.obj['state'] = state
 
 def _show_user_table(users):
     data = []
@@ -50,25 +56,30 @@ def getPortNumbers(user_name):
         return getPortNumbers(user_name)
     return ports
 
-@main.command()
-def add():
+@cli.command()
+@click.pass_context
+def add(ctx):
     """Add a user and their privileges."""
     user_name = getValidUsername()
     n_tickets = click.prompt("Enter number of tickets for this user", type=int, default=3)
     ports = getPortNumbers(user_name)
-    state.add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
+    ctx.obj['state'].add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
         
 
-@main.command()
-def view():
+@cli.command()
+@click.pass_context
+def view(ctx):
     """View all users and their priviliges."""
+    state = ctx.obj['state']
     _show_user_table(state.users)
 
-@main.command()
+@cli.command()
 @click.argument("id")
-def remove(id):
+@click.pass_context
+def remove(ctx, id):
     """Remove user with corresponding id."""
+    state = ctx.obj['state']
     user = state.get_user(int(id))
     # validate id
     if user == None:
@@ -79,22 +90,19 @@ def remove(id):
             state.remove_user_by_id(user.user_id)
             click.echo("Removed user {}.".format(user.user_name)) 
 
-@main.command()
-def remove_all():
+@cli.command()
+@click.pass_context
+def remove_all(ctx):
     """Remove all users."""
+    state = ctx.obj['state']
     n_users = len(state.users)
     if click.confirm("Remove all users? (Currently {} users)".format(n_users)):
         state.remove_all_users()
         click.echo("Removed {} users.".format(n_users))
 
 
-if __name__ == "__main__":    
-    # do setup here for commands
-    # TODO look into context
-    state = ServerState()
-    try:
-        state.load()
-    except:
-        pass
-    
+def main():
+    cli(obj={})
+
+if __name__ == "__main__":      
     main()

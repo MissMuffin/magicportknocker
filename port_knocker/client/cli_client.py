@@ -9,15 +9,6 @@ import time
 import os
 import base64
 
-# check if save file exists
-# note: save file and setup file have identical structure
-save_file = "save_file.json"
-state = None # type: ClientState
-try:
-    state = ClientState.load(save_file)
-except:
-    click.echo("Save file not found.")
-
 def try_tcp(server_ip, port, timeout=1.0):
     # try establishing tcp connection to a authorized port
     # to see if authentication was successful
@@ -31,72 +22,89 @@ def try_tcp(server_ip, port, timeout=1.0):
     finally:
         sock.close()
 
-# query server for public ip address
-public_ip = requests.get('https://ip.blacknode.se').text
 
-# generator for remaining tickets
-# remaining_tickets = state.remaining_tickets()
-
-new_secret = b""
-new_n = 0
-new_ticket = b""
-
-# if all but 2 tickets have been used: generate new ticket secret
-# 2 because: if server desync happened we need one backup ticket
-if state.n_tickets <= 2:
-    new_secret = generate_secret()
-    new_n = 100
-    new_ticket = generate_nth_ticket(new_secret, new_n + 1)
-
-def create_payload(n):
-    # generate ticket
-    ticket = generate_nth_ticket(state.secret, state.n_tickets - n)
-    # create packet to send
-    p = Packet(public_ip, state.user_id, ticket, new_ticket, new_n)
-    return p.pack(state.symm_key)
+def main():
+    # check if save file exists
+    # note: save file and setup file have identical structure
+    save_file = "save_file.json"
+    state = None # type: ClientState
+    try:
+        state = ClientState.load(save_file)
+    except:
+        click.echo("Save file not found.")
 
 
-# # Skip the authencation altogether if ports are already open.
-# if all(try_tcp(state.server_ip, int(port)) for port in state.ports):
-#     print('Success! Ports are already open!')
-#     sys.exit(0)
 
-''' 
-try sending udp packet multiple times in case of packet loss
-increase waiting time between resends in case packet takes a bit longer
-to arrive
-'''
-# create udp socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # query server for public ip address
+    public_ip = requests.get('https://ip.blacknode.se').text
 
-# try authentication with n-1 ticket
-finished = False
-tickets_to_try = 3
-for n in range(tickets_to_try):
-    # create payload
-    payload = create_payload(n)
-    for i in range(5):    
-        sock.sendto(payload, ("localhost", 10000))
-        timeout = 0.25 * i * 3
-        if try_tcp(state.server_ip, int(state.ports[0])):
-            print('Success! Ports are now open!')
-            state.update_state(n, new_secret, new_n)
-            finished = True
+    # generator for remaining tickets
+    # remaining_tickets = state.remaining_tickets()
+
+    new_secret = b""
+    new_n = 0
+    new_ticket = b""
+
+    def create_payload(n):
+        # generate ticket
+        ticket = generate_nth_ticket(state.secret, state.n_tickets - n)
+        # create packet to send
+        p = Packet(public_ip, state.user_id, ticket, new_ticket, new_n)
+        return p.pack(state.symm_key)
+
+    # if all but 2 tickets have been used: generate new ticket secret
+    # 2 because: if server desync happened we need one backup ticket
+    if state.n_tickets <= 2:
+        new_secret = generate_secret()
+        new_n = 100
+        new_ticket = generate_nth_ticket(new_secret, new_n + 1)
+
+
+
+    # # Skip the authencation altogether if ports are already open.
+    # if all(try_tcp(state.server_ip, int(port)) for port in state.ports):
+    #     print('Success! Ports are already open!')
+    #     sys.exit(0)
+
+    ''' 
+    try sending udp packet multiple times in case of packet loss
+    increase waiting time between resends in case packet takes a bit longer
+    to arrive
+    '''
+    # create udp socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    # try authentication with n-1 ticket
+    finished = False
+    tickets_to_try = 3
+    for n in range(tickets_to_try):
+        # create payload
+        payload = create_payload(n)
+        for i in range(5):    
+            sock.sendto(payload, ("localhost", 10000))
+            timeout = 0.25 * i * 3
+            if try_tcp(state.server_ip, int(state.ports[0])):
+                print('Success! Ports are now open!')
+                state.update_state(n, new_secret, new_n)
+                finished = True
+                break
+            else:
+                print("retrying in {timeout} seconds...".format(timeout=timeout))
+                time.sleep(timeout)
+
+        if finished:
             break
-        else:
-            print("retrying in {timeout} seconds...".format(timeout=timeout))
-            time.sleep(timeout)
+        print('retrying with next ticket...')
 
-    if finished:
-        break
-    print('retrying with next ticket...')
+    if not finished:
+        print('Could not authenticate with {} tickets. Contact admin'.format(tickets_to_try))
 
-if not finished:
-    print('Could not authenticate with {} tickets. Contact admin'.format(tickets_to_try))
+    sock.close()
 
-sock.close()
+    # try authentication with n-2 ticket in case of server desync
+    # -> user authenticated successfully and server saved new ticket
+    # but before ports could be opened the server crashed
 
-# try authentication with n-2 ticket in case of server desync
-# -> user authenticated successfully and server saved new ticket
-# but before ports could be opened the server crashed
 
+if __name__ == "__main__":
+    main()

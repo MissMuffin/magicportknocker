@@ -4,4 +4,6 @@
 Pipfile.lock
 .vscode/
 .pytest_cache/
+*.egg-info
+*.log
 
