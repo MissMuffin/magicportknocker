@@ -4,7 +4,7 @@
 
 pip install -e .
 
-pip3 install -U --user "git+https://github.com/fyyree/magicportknocker#egg=port-knocker"
+pip3 install -U --user "git+https://github.com/MissMuffin/magicportknocker#egg=port-knocker"
 
 ## 
 
