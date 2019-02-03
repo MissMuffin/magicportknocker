@@ -31,7 +31,8 @@ def main():
     try:
         state = ClientState.load(save_file)
     except:
-        click.echo("Save file not found.")
+        click.echo("Save file not found. Import save file from admin.")
+        sys.exit(1)
 
 
 
