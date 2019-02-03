@@ -9,7 +9,7 @@ setup(
     author_email='fyyree@gmail.com',
     description='A magic portknocker.',
     url='https://github.com/fyyree/magicportknocker',
-    py_modules=find_packages(),
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             'portknock-client=port_knocker.client.cli_client:main',
