@@ -52,7 +52,7 @@ class ServerStateUser():
         # check if dir for user exists
         cwd = os.getcwd()
         folder_path = cwd + "/user_setups/{}_{}".format(self.user_id, self.user_name)
-        Path(folder_path).mkdir(exist_ok=True) #TODO escape name?
+        Path(folder_path).mkdir(exist_ok=True, parents=True)
         # build file path
         setup_file = folder_path + "/save_file.json"
         # create dict with setup data to be saved to json
