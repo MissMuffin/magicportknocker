@@ -14,7 +14,7 @@ def server_state_setup():
     setup_data = {}
     setup_data["user"] = user.get_client_setup_dict()
     setup_data["server_ip"] = "SERVER_IP"
-    setup_data["auth_port"] = "AUTH_PORT"
+    setup_data["auth_port"] = 123
     with open(setup_file_path, "w+") as f:
         json.dump(setup_data, f)
     yield (server_state, setup_file_path)

@@ -69,7 +69,7 @@ def test_generate_client_setup_file(state):
     state.add_user("tim", 6, [56, 76])
     user = state.get_user(0)
     user.generate_client_setup_file()
-    setup_file_path = "user_setups/client_setup_{}_{}.json".format(user.user_id, user.user_name)
+    setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
     setup, server_ip, auth_port = load_setup(setup_file_path)
     os.remove(setup_file_path)
     assert setup.user_id == user.user_id
