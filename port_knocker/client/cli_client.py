@@ -38,38 +38,37 @@ def main():
 
     # query server for public ip address
     public_ip = requests.get('https://ip.blacknode.se').text
-    public_ip = '192.168.0.2'
+    public_ip = '192.168.0.5'
 
     # generator for remaining tickets
     # remaining_tickets = state.remaining_tickets()
 
-    new_secret = b""
-    new_n = 0
-    new_ticket = b""
-
     def create_payload(n):
         # generate ticket
         ticket = generate_nth_ticket(state.secret, state.n_tickets - n)
+        import base64
+        print(base64.b64encode(ticket))
+        new_secret = b""
+        new_n = 0
+        new_ticket = b""    
+
+        # if all but 2 tickets have been used: generate new ticket secret
+        # 2 because: if server desync happened we need one backup ticket
+        if state.n_tickets <= 2:
+            new_secret = generate_secret()
+            new_n = 100
+            new_ticket = generate_nth_ticket(new_secret, new_n + 1)
         # create packet to send
         p = Packet(public_ip, state.user_id, ticket, new_ticket, new_n)
-        return p.pack(state.symm_key)
+        return p.pack(state.symm_key), new_secret, new_n
 
-    # if all but 2 tickets have been used: generate new ticket secret
-    # 2 because: if server desync happened we need one backup ticket
-    if state.n_tickets <= 2:
-        new_secret = generate_secret()
-        new_n = 100
-        new_ticket = generate_nth_ticket(new_secret, new_n + 1)
-
-
-
-    # # Skip the authencation altogether if ports are already open.
-    # if all(try_tcp(state.server_ip, int(port)) for port in state.ports):
-    #     print('Success! Ports are already open!')
-    #     sys.exit(0)
+    # Skip the authencation altogether if ports are already open.
+    if all(try_tcp(state.server_ip, int(port)) for port in state.ports):
+        print('No authentication needed, ports are already open!')
+        sys.exit(0)
 
     ''' 
-    try sending udp packet multiple times in case of packet loss
+    try sending udp packet multiple times (5) in case of packet loss
     increase waiting time between resends in case packet takes a bit longer
     to arrive
     '''
@@ -81,13 +80,13 @@ def main():
     tickets_to_try = 3
     for n in range(tickets_to_try):
         # create payload
-        payload = create_payload(n)
+        payload, new_secret, new_n = create_payload(n)
         for i in range(5):    
             sock.sendto(payload, (state.server_ip, state.auth_port))
             timeout = 0.25 * i * 3
             if try_tcp(state.server_ip, int(state.ports[0])):
                 print('Success! Ports are now open!')
-                state.update_state(n, new_secret, new_n)
+                state.update_state(n + 1, new_secret, new_n) # Something goes wrong here
                 finished = True
                 break
             else:
