@@ -44,3 +44,9 @@ or copy the following file:
 COMMIT
 # Completed on Sun Feb  3 02:42:47 2019
 ```
+
+### Restore setup (close all client connections)
+```
+iptables-restore </etc/iptables/rules.v4
+iptables-restore </etc/iptables/rules.v6
+```
