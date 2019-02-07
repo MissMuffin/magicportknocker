@@ -49,10 +49,10 @@ def getPortNumbers(user_name):
     ports = ports.split()
     try:
         if any(int(port) > 65535 or int(port) < 1 for port in ports):
-            print("Invalid port numbers, needs to be between 1 and 65535")
+            click.echo("Invalid port numbers, needs to be between 1 and 65535")
             return getPortNumbers(user_name)
     except ValueError:
-        print("Ports must be integers")
+        click.echo("Ports must be integers")
         return getPortNumbers(user_name)
     return ports
 
