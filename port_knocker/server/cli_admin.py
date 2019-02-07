@@ -75,7 +75,7 @@ def view(ctx):
     _show_user_table(state.users)
 
 @cli.command()
-@click.argument("id")
+@click.argument("id", required=True, type=int)
 @click.pass_context
 def remove(ctx, id):
     """Remove user with corresponding id."""
