@@ -66,10 +66,10 @@ class ServerState():
     id_count = 0
     users = []
     _save_file = "server_state.json"
-    auth_port = None
-    server_ip = None
+    auth_port = ""
+    server_ip = ""
 
-    def __init__(self, server_ip="localhost", auth_port="13337", id_count=0, users=None, save_file="server_state.json"):
+    def __init__(self, server_ip="", auth_port="", id_count=0, users=None, save_file="server_state.json"):
         self.id_count = id_count
         self.server_ip = server_ip
         self.auth_port = auth_port
