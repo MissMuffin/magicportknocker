@@ -1,11 +1,14 @@
 import socket
 import sys
-from port_knocker.util.packet import Packet
-from port_knocker.util.auth import verify_ticket
-from port_knocker.util.server_state import ServerState
-from port_knocker.util.security_logger import sec_logger
-from port_knocker.server.iptables import open_ports
+
 import click
+
+from port_knocker.server.iptables import open_ports
+from port_knocker.util.auth import verify_ticket
+from port_knocker.util.packet import Packet
+from port_knocker.util.security_logger import sec_logger
+from port_knocker.util.server_state import ServerState
+
 
 class Server():
 
