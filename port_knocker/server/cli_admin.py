@@ -46,6 +46,7 @@ def add(ctx):
 def view(ctx):
     """View all users and their priviliges."""
     state = ctx.obj['state']
+    show_server_config(state.server_ip, state.auth_port)
     show_user_table(state.users)
 
 @cli.command()

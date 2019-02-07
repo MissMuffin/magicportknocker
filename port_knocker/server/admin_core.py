@@ -121,3 +121,10 @@ def show_user_table(users):
 
     table = AsciiTable(data)
     click.echo(table.table)
+
+def show_server_config(server_ip, auth_port):
+    data = []
+    data.append(["Server IPv4 address", "Authentication port"])
+    data.append([server_ip, auth_port])
+    table = AsciiTable(data)
+    click.echo(table.table)
