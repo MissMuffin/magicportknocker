@@ -4,6 +4,7 @@ from port_knocker.util.server_state import ServerState
 from terminaltables import AsciiTable
 from port_knocker.util.auth import generate_secret
 import sys
+import ipaddress
 
 state = None # type: ServerState
 
@@ -149,6 +150,67 @@ def update(ctx, id):
 
         state.update_user(user.user_id, new_ports=new_ports, new_symm_key=new_symm_key)
         click.echo("Data has been saved and new user setup file has been generated.")
+
+def validate_ipv4_address(ip):
+    try:
+        return ipaddress.ip_address(ip)
+    except Exception as e:
+        return e 
+
+def prompt_server_ip(old_server_ip):
+    click.echo("Enter new server address.")
+    new_server_ip = click.prompt("Leave empty and press enter to keep old address.", default="", show_default=False, type=str)
+    
+    # check if was empty
+    if new_server_ip == "":
+        new_server_ip = old_server_ip
+    else:
+        # check if format is valid
+        if not validate_ipv4_address(new_server_ip):
+            click.echo("{} does not appear to be an IPv4 address. Enter valid ip.")
+            return prompt_server_ip(old_server_ip)
+        return new_server_ip
+
+def prompt_auth_port(old_auth_port):
+    click.echo("Enter new authentication port.")
+    new_auth_port = click.prompt("Leave empty and press enter to keep old port.", default="", show_default=False, type=int)
+    
+    # check if empty -> keep old
+    if new_auth_port == "":
+        new_auth_port = old_auth_port
+    else:
+        # validate
+        if new_auth_port > 65535 or new_auth_port < 1 :
+            click.echo("Invalid port number, needs to be between 1 and 65535")
+            return prompt_auth_port(old_auth_port)
+        return new_auth_port
+
+def configure_server_ip(state):
+    click.echo("The current server ip: {}".format(state.server_ip))
+    click.echo("The current authentication port: {}".format(state.auth_port))
+    new_server_ip = prompt_server_ip(state.server_ip)
+    new_auth_port = prompt_auth_port(state.auth_port)
+    
+    # confirm configuration
+    confirm = click.confirm("New configuration: {}:{}. Save?".format(new_server_ip, new_auth_port))
+    if confirm:
+        state.server_ip = new_server_ip
+        state.auth_port = new_auth_port
+        state.generate_all_client_setup_files()
+        state.save()
+        click.echo("Updated server config successfully and updated all user setup files")    
+    else:
+        click.echo("Server config unchanged.")
+
+@cli.command()
+@click.pass_context
+def configure(ctx):
+    """
+    Enter the ip address of the server and the port for authentication that user
+    will use.
+    """
+    state = ctx.obj['state']
+    configure_server_ip(state)
 
 def main():
     cli(obj={})

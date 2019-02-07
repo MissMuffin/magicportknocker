@@ -8,7 +8,7 @@ import shutil
 @pytest.fixture
 def state():
     filename = str(uuid.uuid4()) + ".json"
-    state = ServerState(save_file=filename)
+    state = ServerState(save_file=filename, server_ip="localhost", auth_port="7889")
     state.remove_all_users()
     yield state
     os.remove(filename)
@@ -21,6 +21,7 @@ def test_create_and_save(state):
     loaded.load()
     assert loaded.id_count == 0 and isinstance(loaded.users, list)
     assert state.id_count == loaded.id_count and state.users == loaded.users
+    assert state.server_ip == loaded.server_ip
 
 
 def test_add_one(state):
@@ -69,7 +70,7 @@ def test_get_user(state):
 def test_generate_client_setup_file(state):
     state.add_user("tim", 6, [56, 76])
     user = state.get_user(0)
-    user.generate_client_setup_file()
+    user.generate_client_setup_file(state.server_ip, state.auth_port)
     setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
     setup, server_ip, auth_port = load_setup(setup_file_path)
     shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
@@ -81,8 +82,8 @@ def test_generate_client_setup_file(state):
 
 def test_update(state):
     state.add_user("tim", 6, [56, 76])
-    user = state.get_user(0)
-    user.generate_client_setup_file()
+    user =  state.get_user(0)
+    user.generate_client_setup_file(state.server_ip, state.auth_port)
     setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
     setup, _, _ = load_setup(setup_file_path)
 
