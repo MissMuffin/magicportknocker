@@ -2,24 +2,24 @@ import click
 from terminaltables import AsciiTable
 import ipaddress
 
-def getValidUsername():
+def prompt_username():
     blacklisted_characters = ['/', '\\', '.']
     user_name = click.prompt("Enter user name (Spaces allowed)")
     if any(c in user_name for c in blacklisted_characters): 
         print("{} contains illegal characters ({})".format(user_name, blacklisted_characters))
-        return getValidUsername()
+        return prompt_username()
     return user_name
 
-def getPortNumbers(user_name):
+def prompt_port_numbers(user_name):
     ports = click.prompt("Enter port priviliges for user {} (separate port numbers with space)".format(user_name))
     ports = ports.split()
     try:
         if any(int(port) > 65535 or int(port) < 1 for port in ports):
             click.echo("Invalid port numbers, needs to be between 1 and 65535")
-            return getPortNumbers(user_name)
+            return prompt_port_numbers(user_name)
     except ValueError:
         click.echo("Ports must be integers")
-        return getPortNumbers(user_name)
+        return prompt_port_numbers(user_name)
     return ports
 
 def get_new_ports(old_ports, user_name):

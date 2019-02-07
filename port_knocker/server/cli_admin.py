@@ -35,9 +35,9 @@ def add(ctx):
         state.server_ip = new_server_ip
         state.auth_port = new_auth_port
 
-    user_name = getValidUsername()
+    user_name = prompt_username()
     n_tickets = click.prompt("Enter number of tickets for this user", type=int, default=3)
-    ports = getPortNumbers(user_name)
+    ports = prompt_port_numbers(user_name)
     state.add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))
         
