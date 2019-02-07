@@ -2,6 +2,8 @@ import click
 import requests
 from port_knocker.util.server_state import ServerState
 from terminaltables import AsciiTable
+from port_knocker.util.auth import generate_secret
+import sys
 
 state = None # type: ServerState
 
@@ -100,6 +102,53 @@ def remove_all(ctx):
         state.remove_all_users()
         click.echo("Removed {} users.".format(n_users))
 
+def get_new_ports(old_ports, user_name):
+    click.echo("The user {} currently has the following port privileges: {}.".format(user_name, str(old_ports)))
+    click.echo("Enter new port priviliges (separate port numbers with space).")
+    ports = click.prompt("To keep old port privileges, press enter without inputting anything.", default="", show_default=False)
+
+    # check if keep old ports
+    if ports == "":
+        return old_ports
+
+    # validate new ports
+    ports = ports.split()
+    try:
+        if any(int(port) > 65535 or int(port) < 1 for port in ports):
+            click.echo("Invalid port numbers, needs to be between 1 and 65535")
+            return get_new_ports(old_ports, user_name)
+    except ValueError:
+        click.echo("Ports must be integers")
+        return get_new_ports(old_ports, user_name)
+    return ports
+
+@cli.command()
+@click.argument('id', required=True, type=int)
+@click.pass_context
+def update(ctx, id):
+    """Edit a user's port privileges and/or generate new symmetric key."""
+    state = ctx.obj['state']
+    user = state.get_user(int(id))
+    # validate id
+    if user == None:
+        click.echo("No user with this id.")
+    else:
+        # update ports
+        new_ports = get_new_ports(user.ports, user.user_name)
+
+        # update symm_key
+        new_symm_key = user.symm_key
+        if click.confirm("Generate new symmetric key for this user?"):
+            new_symm_key = generate_secret()
+
+        # check for changes
+        if new_ports == user.ports and new_symm_key == user.symm_key:
+            # nothing was changed, exit without updating
+            click.echo("User remains unchanged.")
+            sys.exit(0)
+
+        state.update_user(user.user_id, new_ports=new_ports, new_symm_key=new_symm_key)
+        click.echo("Data has been saved and new user setup file has been generated.")
 
 def main():
     cli(obj={})

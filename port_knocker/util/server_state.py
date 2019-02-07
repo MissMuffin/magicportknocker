@@ -141,3 +141,10 @@ class ServerState():
     def generate_all_client_setup_files(self):
         for user in self.users:
             user.generate_client_setup_file()
+
+    def update_user(self, id, new_ports=None, new_symm_key=None):
+        user = self.get_user(id)
+        user.ports = new_ports
+        user.symm_key = new_symm_key
+        user.generate_client_setup_file()
+        self.save()

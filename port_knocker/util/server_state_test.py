@@ -2,7 +2,8 @@ from .server_state import *
 import pytest
 import uuid
 import base64
-
+from port_knocker.util.auth import generate_secret
+import shutil
 
 @pytest.fixture
 def state():
@@ -71,12 +72,32 @@ def test_generate_client_setup_file(state):
     user.generate_client_setup_file()
     setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
     setup, server_ip, auth_port = load_setup(setup_file_path)
-    os.remove(setup_file_path)
+    shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
     assert setup.user_id == user.user_id
     assert user.user_name == setup.user_name
     assert user.symm_key == setup.symm_key
     assert state.auth_port == auth_port
     assert state.server_ip == server_ip
+
+def test_update(state):
+    state.add_user("tim", 6, [56, 76])
+    user = state.get_user(0)
+    user.generate_client_setup_file()
+    setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
+    setup, _, _ = load_setup(setup_file_path)
+
+    new_ports = [90, 89]
+    new_symm = generate_secret()
+    state.update_user(user.user_id, new_ports=new_ports, new_symm_key=new_symm)
+
+    updated_setup, _, _ = load_setup(setup_file_path)
+    shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
+
+    assert setup.user_id == updated_setup.user_id
+    assert updated_setup.ports == new_ports
+    assert setup.ports != updated_setup.ports
+    assert updated_setup.symm_key == new_symm
+    assert setup.symm_key != updated_setup.symm_key 
 
 def load_setup(setup_file):
     with open(setup_file, "r") as f:
