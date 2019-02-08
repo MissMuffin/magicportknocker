@@ -50,7 +50,7 @@ def view(ctx):
 @click.argument("id", required=True, type=int)
 @click.pass_context
 def remove(ctx, id):
-    """Remove user with corresponding id."""
+    """Remove user with corresponding id and remove their setup files."""
     state = ctx.obj['state']
     user = state.get_user(int(id))
     # validate id
@@ -58,19 +58,19 @@ def remove(ctx, id):
         click.echo("No user with this id.")
     else:
         show_user_table(user)
-        if click.confirm("Remove this user?"):
+        if click.confirm("Remove this user and their setup file?"):
             state.remove_user_by_id(user.user_id)
-            click.echo("Removed user {}.".format(user.user_name)) 
+            click.echo("Removed user {} and their setup file.".format(user.user_name)) 
 
 @cli.command()
 @click.pass_context
 def remove_all(ctx):
-    """Remove all users."""
+    """Remove all users and their setup files."""
     state = ctx.obj['state']
     n_users = len(state.users)
-    if click.confirm("Remove all users? (Currently {} users)".format(n_users)):
+    if click.confirm("Remove all users and their setup files? (Currently {} users)".format(n_users)):
         state.remove_all_users()
-        click.echo("Removed {} users.".format(n_users))
+        click.echo("Removed {} users and their setup files.".format(n_users))
 
 @cli.command()
 @click.argument('id', required=True, type=int)

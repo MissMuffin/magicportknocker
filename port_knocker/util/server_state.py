@@ -3,6 +3,7 @@ import json
 from base64 import b64encode, b64decode
 from pathlib2 import Path
 from .auth import generate_secret, generate_nth_ticket
+import shutil
 
 
 class ServerStateUser():
@@ -131,11 +132,22 @@ class ServerState():
             if user.user_id == user_id:
                 self.users.pop(i)
                 self.save()
+                self.remove_user_setup(user.user_id, user.user_name)
                 return user
             else:
                 return "No user with that id."
 
+    def remove_user_setup(self, user_id, user_name):
+        cwd = os.getcwd()
+        file_path = cwd + "/user_setups/{}_{}".format(user_id, user_name)
+        shutil.rmtree(file_path, ignore_errors=True)
+
+    def remove_all_user_setups(self):
+        for user in self.users:
+            self.remove_user_setup(user.user_id, user.user_name)
+
     def remove_all_users(self):
+        self.remove_all_user_setups()
         self.id_count = 0
         del self.users
         self.users = []
