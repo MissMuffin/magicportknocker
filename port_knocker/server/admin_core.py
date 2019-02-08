@@ -137,8 +137,11 @@ def show_user_table(users):
     data.append(["Id", "User name", "Remaining tickets", "Ports"])
     
     if isinstance(users, list):
-        for user in users:
-            data.append([user.user_id, user.user_name, user.n_tickets, " ".join(user.ports)])
+        if len(users) > 0:
+            for user in users:
+                data.append([user.user_id, user.user_name, user.n_tickets, " ".join(user.ports)])
+        else:
+            data.append(["", "", "", ""])
     else:
         data.append([users.user_id, users.user_name, users.n_tickets, " ".join(users.ports)])
 
