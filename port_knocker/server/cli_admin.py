@@ -30,10 +30,7 @@ def add(ctx):
     
     # probably first command to be run, so ask to configure server ip and auth port 
     if state.server_ip == "" and state.auth_port == "":
-        click.echo("Server info is not configured. Please enter:")
-        new_server_ip, new_auth_port = setup_server(state)
-        state.server_ip = new_server_ip
-        state.auth_port = new_auth_port
+        state = setup_server(state)
 
     user_name = prompt_username()
     n_tickets = click.prompt("Enter number of tickets for this user", type=int, default=3)
@@ -111,7 +108,10 @@ def configure(ctx):
     will use.
     """
     state = ctx.obj['state']
-    update_server(state)
+    if state.server_ip == "" and state.auth_port == "":
+        setup_server(state)
+    else:
+        configure_server(state)
 
 def main():
     cli(obj={})
