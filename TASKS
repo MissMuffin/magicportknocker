@@ -59,4 +59,4 @@
 - port always closes automatically 2 hours after authenticating and user must re-authenticate (cron jobs)
 
 # Questions
-- 
+- server: can only handle one connection at a time?
