@@ -12,20 +12,26 @@ from port_knocker.util.server_state import ServerState
 
 class Server():
 
-    def run(self):
-
+    def load_savefile(self):
         state = ServerState()
         try:
             state.load()
+            return state
         except FileNotFoundError:
             click.echo("Save file not found. Please do the initial setup via the admin cli.")
             sys.exit(1)
 
+    def run(self):
+
+        state = self.load_savefile()
+
         def key_finder(user_id):
+            '''
+            Returns symmetric key for given use. Raises exception if user does not exist.
+            '''
             user_state = state.get_user(user_id)
             if user_state == None:
                 raise Exception("User {user_id} does not exist".format(user_id=user_id))
-            
             return user_state.symm_key
 
         # create a UDP socket
@@ -50,7 +56,7 @@ class Server():
                     sec_logger.warn('User attempting to authenticate does not exist.')
                 else:
                     click.echo(e)
-                    sec_logger.warn('Weird packet.')
+                    sec_logger.warn('Received weird packet, could not unpack.')
                 continue
 
             # get user state

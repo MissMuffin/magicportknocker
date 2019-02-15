@@ -46,13 +46,18 @@ class ServerStateUser():
                 "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
 
-    def generate_client_setup_file(self, server_ip, auth_port):
-        # check if dir for user exists
-        cwd = os.getcwd()
-        folder_path = cwd + "/user_setups/{}_{}".format(self.user_id, self.user_name)
-        Path(folder_path).mkdir(exist_ok=True, parents=True)
-        # build file path
-        setup_file = folder_path + "/save_file.json"
+    def generate_client_setup_file(self, server_ip, auth_port, fname=None):
+
+        if not fname:
+            # check if dir for user exists
+            cwd = os.getcwd()
+            folder_path = cwd + "/user_setups/{}_{}".format(self.user_id, self.user_name)
+            Path(folder_path).mkdir(exist_ok=True, parents=True)
+            # build file path
+            setup_file = folder_path + "/save_file.json"
+        else:
+            setup_file = fname
+
         # create dict with setup data to be saved to json
         setup = {}
         setup["user"] = self.get_client_setup_dict()
@@ -111,14 +116,14 @@ class ServerState():
             self.auth_port = int(state_dict["auth_port"])
 
     #  adds new user and saves new user to json
-    def add_user(self, user_name, n_tickets, ports):
+    def add_user(self, user_name, n_tickets, ports, fname=None):
         new_user = ServerStateUser(user_id=self.id_count,
                                    user_name=user_name,
                                    n_tickets=n_tickets,
                                    ports=ports)
         self.users.append(new_user)
         self.id_count += 1
-        new_user.generate_client_setup_file(self.server_ip, self.auth_port)
+        new_user.generate_client_setup_file(self.server_ip, self.auth_port, fname=fname)
         self.save() 
 
     def get_user(self, user_id):
