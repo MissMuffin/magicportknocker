@@ -12,14 +12,20 @@ from port_knocker.util.server_state import ServerState
 
 class Server():
 
+    stop = False
+    save_file = "server_state.json"
+
     def load_savefile(self):
-        state = ServerState()
+        state = ServerState(save_file=self.save_file)
         try:
             state.load()
             return state
         except FileNotFoundError:
             click.echo("Save file not found. Please do the initial setup via the admin cli.")
             sys.exit(1)
+
+    def open_ports(self, ip, ports):
+        open_ports(ip, ports)
 
     def run(self):
 
@@ -38,7 +44,7 @@ class Server():
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         # bind socket
-        server_address = ('0.0.0.0', 13337)
+        server_address = ('0.0.0.0', state.auth_port)
         sock.bind(server_address)
         click.echo('listening on {} port {}'.format(*server_address))
         click.echo('listening...')
@@ -79,7 +85,7 @@ class Server():
                 click.echo("ticket was correct")
                 click.echo("client ip: {}".format(packet.ip))
                 click.echo("authorized ports: {}\n".format(str(user_state.ports)))
-                open_ports(packet.ip, user_state.ports)
+                self.open_ports(packet.ip, user_state.ports)
             else:
                 sec_logger.warn("authentication failed for {} ({})".format(user_state.user_name, user_state.user_id))
 

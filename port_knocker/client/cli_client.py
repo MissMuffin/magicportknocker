@@ -14,6 +14,8 @@ from port_knocker.util.packet import Packet
 
 class Client():
 
+    save_file = "save_file.json"
+
     def is_authenticated(self, server_ip, port, timeout=1.0):
         # try establishing tcp connection to a authorized port
         # to see if authentication was successful and port has been opened
@@ -64,15 +66,15 @@ class Client():
 
         return p.pack(symm_key), new_secret, new_n
 
-    def load_save_file(self, fname):
+    def load_save_file(self):
         try:
             # check if save file exists
-            return ClientState.load(fname)
+            self.state = ClientState.load(self.save_file)
         except:
             click.echo("Save file not found. Import save file from admin.")
             sys.exit(1)
 
-    def authenticate(self, state=None, ip_addr=None, tickets_to_try=3, resend_packet=5):
+    def authenticate(self, ip_addr=None, tickets_to_try=3, resend_packet=5):
         ''' 
         try sending udp packet multiple times (5) in case of packet loss
         increase waiting time between resends in case packet takes a bit longer
@@ -88,14 +90,14 @@ class Client():
         finished = False
         for n in range(tickets_to_try):
             payload, new_secret, new_n = self.create_payload(
-                n, state.secret, state.n_tickets, ip_addr, state.user_id, state.symm_key)
+                n, self.state.secret, self.state.n_tickets, ip_addr, self.state.user_id, self.state.symm_key)
 
             for i in range(resend_packet + 1):
-                sock.sendto(payload, (state.server_ip, state.auth_port))
+                sock.sendto(payload, (self.state.server_ip, self.state.auth_port))
                 timeout = 0.25 * i * 3
-                if self.is_authenticated(state.server_ip, int(state.ports[0])):
+                if self.is_authenticated(self.state.server_ip, int(self.state.ports[0])):
                     print('Success! Ports are now open!')
-                    state.update_state(n + 1, new_secret, new_n) # Something goes wrong here
+                    self.state.update_state(n + 1, new_secret, new_n) # Something goes wrong here
                     finished = True
                     break
                 else:
@@ -112,25 +114,23 @@ class Client():
         sock.close()
         return new_secret, new_n
 
-    def run(self, server_in_private_network=False):
-        
-        # load client state
-        save_file = "save_file.json"
-        state = self.load_save_file(save_file)
+    def run(self, server_in_private_network=False):        
+        # load client state        
+        self.load_save_file()
 
         # get ip address
         ip_addr = self.get_ip(private=server_in_private_network)
         click.echo("Trying to authenticate at {}:{}. Server is in {} Network and own ip is {}".format(
-                state.server_ip, state.auth_port, 
+                self.state.server_ip, self.state.auth_port, 
                 "private" if server_in_private_network else "public",
                 ip_addr))
                     
         # Skip the authencation altogether if ports are already open.
-        if all(self.is_authenticated(state.server_ip, int(port)) for port in state.ports):
+        if all(self.is_authenticated(self.state.server_ip, int(port)) for port in self.state.ports):
             print('No authentication needed, privileged ports are already open!')
-            sys.exit(0)
+            return
 
-        self.authenticate(state=state, ip_addr=ip_addr)        
+        self.authenticate(ip_addr=ip_addr)        
 
 @click.command()
 @click.option("-p", "--private", default=False, show_default=True, is_flag=True)
