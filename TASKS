@@ -60,3 +60,4 @@
 
 # Questions
 - server: can only handle one connection at a time?
+- what wehn server gets new secret ticket, but crashes before opens ports? can we handle this somehow
