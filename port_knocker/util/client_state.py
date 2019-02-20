@@ -2,7 +2,7 @@ import json
 from base64 import b64encode, b64decode
 
 class ClientState():
-    _save_file = None
+    _savefile = "client_state.json"
     
     user_id = 0
     user_name = ""
@@ -49,11 +49,12 @@ class ClientState():
                                 ports=user_info["ports"],
                                 server_ip=client_info["server_ip"],
                                 auth_port=client_info["auth_port"])
+            state._savefile = save_file
             return state
 
-    def save(self, save_file="save_file.json"):
+    def save(self):
         setup = self.get_dict()
-        with open(save_file, "w+") as f:
+        with open(self._savefile, "w+") as f:
             json.dump(setup, f, indent=4)
 
     def update_state(self, n_ticket_sent, new_secret, new_n):

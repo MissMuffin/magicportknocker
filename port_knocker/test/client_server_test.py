@@ -36,52 +36,62 @@ def background_server():
 def fresh_files(path):
     server_fname = str(path / (str(uuid.uuid4()) + ".json"))
     client_fname = str(path / (str(uuid.uuid4()) + ".json"))
-
     server_state = ServerState(save_file=server_fname, server_ip="127.0.0.1", auth_port="13337")
     server_state.add_user("tom", 8, [80], fname=client_fname)
     return server_fname, client_fname
     
 
-
-
 def test_end_to_end(mocker, background_server, tmp_path):
-    server_cfg, client_cfg = fresh_files(tmp_path)
-    print(client_cfg, server_cfg)
 
+    server_cfg, client_cfg = fresh_files(tmp_path)
     
     client = Client()
     client.save_file = client_cfg
     mock_is_auth = mocker.patch.object(Client, "is_authenticated")
     # emulate successful auth on first attempt
-    mock_is_auth.side_effect = [False, True]
+    mock_is_auth.side_effect = [False, True] * 30
+
     background_server.server.save_file = server_cfg
     mocker.patch.object(background_server.server, 'open_ports')
+
+    sstate = background_server.server.load_savefile()
+    cstate = client.load_save_file()
+
+    current_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
+    current_server_ticket = sstate.get_user(0).ticket
+    assert verify_ticket(current_client_ticket, current_server_ticket)
+
     background_server.start()
-    time.sleep(1)
+    time.sleep(0.5)
     
-    # for i in range(10):
-    #     client.run()
-
-    # import pdb; pdb.set_trace()
-    # assert mock.call_count == 1
-
-    # server_state = ServerState(save_file=server_cfg)
-    # server_state.load()
-    # client_ticket = generate_nth_ticket(client.state.secret, client.state.n_tickets - 1)
-    # server_answer = server_state.get_user(0).secret
-    # assert client_ticket == server_answer
-
-    
-
-    
-    
-    
+    client.run()
+    time.sleep(0.5)
 
 
+    sstate = background_server.server.load_savefile()
+    cstate = client.load_save_file()
 
+    new_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
+    new_server_ticket = sstate.get_user(0).ticket
 
+    print("loaded {}  {}".format(sstate.get_user(0).n_tickets, sstate.get_user(0).ticket))
 
+    assert new_server_ticket != current_server_ticket
+    assert new_client_ticket != current_client_ticket
 
+    assert verify_ticket(new_client_ticket, new_server_ticket)
+
+    for i in range(20):
+        client.run()
+        time.sleep(0.5)
+
+    sstate = background_server.server.load_savefile()
+    cstate = client.load_save_file()
+    new_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
+    new_server_ticket = sstate.get_user(0).ticket
+    assert verify_ticket(new_client_ticket, new_server_ticket)
+
+   
 
 # def test(mocker, tmp_path):
 #     server_fname = str(tmp_path / (str(uuid.uuid4()) + ".json"))
@@ -112,7 +122,7 @@ def test_end_to_end(mocker, background_server, tmp_path):
 #     client.authenticate(ip_addr=ip_addr, tickets_to_try=3, resend_packet=0)
 #     assert cstate.n_tickets == orig_cstate.n_tickets - 1 
 #     # remaining tickets 7
-
+# 
 #     # emulate successful auth on second attempt
 #     mock_is_auth.side_effect = [False, True]
 #     client.authenticate(ip_addr=ip_addr, tickets_to_try=3, resend_packet=0)

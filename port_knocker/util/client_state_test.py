@@ -38,7 +38,8 @@ def test_import_setup(server_state_setup):
 
 def test_save_load(client_state):
     filename = str(uuid.uuid4()) + ".json"
-    client_state.save(save_file=filename)
+    client_state._savefile = filename
+    client_state.save()
     loaded_client_state = ClientState.load(save_file=filename)
     assert client_state.symm_key == loaded_client_state.symm_key
     assert client_state.ports == loaded_client_state.ports

@@ -74,9 +74,9 @@ def test_generate_client_setup_file(state):
     setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
     setup, server_ip, auth_port = load_setup(setup_file_path)
     shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
-    assert setup.user_id == user.user_id
-    assert user.user_name == setup.user_name
-    assert user.symm_key == setup.symm_key
+    assert setup["user_id"] == user.user_id
+    assert user.user_name == setup["user_name"]
+    assert user.symm_key == setup["symm_key"]
     assert state.auth_port == auth_port
     assert state.server_ip == server_ip
 
@@ -94,22 +94,23 @@ def test_update(state):
     updated_setup, _, _ = load_setup(setup_file_path)
     shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
 
-    assert setup.user_id == updated_setup.user_id
-    assert updated_setup.ports == new_ports
-    assert setup.ports != updated_setup.ports
-    assert updated_setup.symm_key == new_symm
-    assert setup.symm_key != updated_setup.symm_key 
+    assert setup["user_id"] == updated_setup["user_id"]
+    assert updated_setup["ports"] == new_ports
+    assert setup["ports"] != updated_setup["ports"]
+    assert updated_setup["symm_key"] == new_symm
+    assert setup["symm_key"] != updated_setup["symm_key"] 
 
 def load_setup(setup_file):
     with open(setup_file, "r") as f:
         client_info = json.load(f)
         user_info = client_info["user"]
-        user_setup = ServerStateUser(user_id=user_info["user_id"],
-                                user_name=user_info["user_name"],
-                                ports=user_info["ports"],
-                                n_tickets=user_info["n_tickets"],
-                                secret=base64.b64decode(user_info["secret"]),
-                                symm_key=base64.b64decode(user_info["symm_key"]))
+        user_setup = {  "user_id": user_info["user_id"],
+                        "user_name": user_info["user_name"],
+                        "ports": user_info["ports"],
+                        "n_tickets": user_info["n_tickets"],
+                        "secret": base64.b64decode(user_info["secret"]),
+                        "symm_key": base64.b64decode(user_info["symm_key"])
+                }
         server_ip = client_info["server_ip"]
         auth_port = client_info["auth_port"]
         return user_setup, server_ip, auth_port

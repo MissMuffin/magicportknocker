@@ -5,28 +5,32 @@ from pathlib2 import Path
 from .auth import generate_secret, generate_nth_ticket
 import shutil
 
+# TODO fix secret vs ticket issue (saving!)
 
 class ServerStateUser():
     user_id = 0
     user_name = ""
     n_tickets = 0
     secret = b"SECRET"
+    ticket = b"TICKET"
     symm_key = b"SYMM_KEY"
     ports = []
 
     def __init__(self, user_id, user_name, ports, n_tickets=10,
-                 secret=None, symm_key=None):
+                symm_key=None, ticket=None):
+
         self.user_id = user_id
         self.user_name = user_name
         self.n_tickets = n_tickets
         self.ports = ports
 
-        self.secret = secret
-        if secret == None:
+        self.ticket = ticket
+        if self.ticket == None:
             self.secret = generate_secret()
+            self.ticket = generate_nth_ticket(self.secret, self.n_tickets + 1)
         
         self.symm_key = symm_key
-        if symm_key == None:
+        if self.symm_key == None:
             self.symm_key = generate_secret()
         
     def get_dict(self):
@@ -34,7 +38,7 @@ class ServerStateUser():
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
                 "n_tickets": self.n_tickets,
-                "secret": b64encode(generate_nth_ticket(self.secret, self.n_tickets + 1)).decode(),
+                "ticket": b64encode(self.ticket).decode(),
                 "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
 
@@ -108,7 +112,7 @@ class ServerState():
                 self.users.append(ServerStateUser(user_id=user["user_id"],
                                                   user_name=user["user_name"],
                                                   n_tickets=user["n_tickets"],
-                                                  secret=b64decode(user["secret"]),
+                                                  ticket=b64decode(user["ticket"]),
                                                   symm_key=b64decode(user["symm_key"]),
                                                   ports=user["ports"]))
             self.id_count = state_dict["id_count"]
