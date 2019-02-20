@@ -16,6 +16,7 @@ class Client():
 
     save_file = "save_file.json"
     _state = None # type: ClientState
+    _resend_packet = 5
 
     def is_authenticated(self, server_ip, port, timeout=1.0):
         # try establishing tcp connection to a authorized port
@@ -131,7 +132,7 @@ class Client():
             print('No authentication needed, privileged ports are already open!')
             return
 
-        self.authenticate(ip_addr=ip_addr)        
+        self.authenticate(ip_addr=ip_addr, resend_packet=self._resend_packet)        
 
 @click.command()
 @click.option("-p", "--private", default=False, show_default=True, is_flag=True)
