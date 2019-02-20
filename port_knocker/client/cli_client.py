@@ -45,20 +45,20 @@ class Client():
             ip_addr = requests.get('https://ip.blacknode.se').text
         return ip_addr
 
-    def create_payload(self, n, secret, n_tickets, ip_addr, user_id, symm_key):
-        # generate ticket
+    def create_payload(self, n, secret, n_tickets, ip_addr, user_id, symm_key, new_secret=None, new_n=0):
+        
         # TODO put generate ticket in clientstate? wrong responsibility here
         ticket = generate_nth_ticket(secret, n_tickets - n)
         print(base64.b64encode(ticket))
        
         # TODO make it so that new secret is only generated once
-        new_secret = b""
-        new_n = 0
+        new_secret = new_secret
+        new_n = new_n
         new_ticket = b""    
 
         # if all but 2 tickets have been used: generate new ticket secret
         # 2 because: if server desync happened we need one backup ticket
-        if n_tickets <= 2:
+        if n_tickets <= 2 and not new_secret:
             new_secret = generate_secret()
             new_n = 100
             new_ticket = generate_nth_ticket(new_secret, new_n + 1)
@@ -85,17 +85,23 @@ class Client():
         # create udp socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        new_secret = b""
+        new_secret = None
         new_n = 0
 
         # try authentication with n-1 ticket
         finished = False
         for n in range(tickets_to_try):
-            payload, new_secret, new_n = self.create_payload(
-                n, self._state.secret, self._state.n_tickets, ip_addr, self._state.user_id, self._state.symm_key)
-
+            payload, new_secret, new_n = self.create_payload(n, 
+                                                            self._state.secret, 
+                                                            self._state.n_tickets, 
+                                                            ip_addr,
+                                                            self._state.user_id, 
+                                                            self._state.symm_key, 
+                                                            new_n=new_n, 
+                                                            new_secret=new_secret)
             for i in range(resend_packet + 1):
                 sock.sendto(payload, (self._state.server_ip, self._state.auth_port))
+                print("sending ticket")
                 timeout = 0.25 * i * 3
                 if self.is_authenticated(self._state.server_ip, int(self._state.ports[0])):
                     print('Success! Ports are now open!')

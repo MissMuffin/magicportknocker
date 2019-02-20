@@ -94,53 +94,46 @@ def test_end_to_end(mocker, background_server, tmp_path):
     # assert that a new secret has been generated
     assert first_secret != new_secret
 
-# def test_end_to_end_with_desync(mocker, background_server, tmp_path):
-#     """
-#     Test that authentication still succeeds when there is a ticket desync of 2. This situation may occur
-#     when the server received a correct authentication attempt from a client and saved the new ticket to disk,
-#     but before the corresponding ports could be openend the server crashed. In this test, we assume this process
-#     happend twice, therefore a desync of two tickets.
-#     """
+def test_end_to_end_with_desync(mocker, background_server, tmp_path):
+    """
+    Test that authentication still succeeds when there is a ticket desync of 2. This situation may occur
+    when the server received a correct authentication attempt from a client and saved the new ticket to disk,
+    but before the corresponding ports could be openend the server crashed. In this test, we assume this process
+    happend twice, therefore a desync of two tickets.
+    """
 
-#     server_cfg, client_cfg = fresh_files(tmp_path)
+    server_cfg, client_cfg = fresh_files(tmp_path)
     
-#     client = Client()
-#     client.save_file = client_cfg
-#     # emulate checking for open ports after a successful authentication
-#     ## alternate False, False, False, True: first check is if ports are already open to
-#     ## avoid authenticating twice, after that check are for successful authentication
-#     mock_is_auth = mocker.patch.object(Client, "is_authenticated")
-#     mock_is_auth.side_effect = [False, False, False, True] * 5
+    client = Client()
+    client.save_file = client_cfg
+    client._resend_packet = 0
 
-#     background_server.server.save_file = server_cfg
-#     # overwrite open ports script to do nothing for this test
-#     mocker.patch.object(background_server.server, 'open_ports')
+    # emulate checking for open ports after a successful authentication
+    ## alternate False, False, False, True: first check is if ports are already open to
+    ## avoid authenticating twice, after that check are for successful authentication
+    mock_is_auth = mocker.patch.object(Client, "is_authenticated")
+    mock_is_auth.side_effect = [False, False, False, True] * 5
 
-#     # check that inital setup is synced
-#     first_secret, current_client_ticket, current_server_ticket = assert_tickets_synced(background_server, client)
+    background_server.server.save_file = server_cfg
+    # overwrite open ports script to do nothing for this test
+    mocker.patch.object(background_server.server, 'open_ports')
 
-#     background_server.start()
-#     time.sleep(0.5) # give server process time to start
+    sstate = background_server.server.load_savefile()
+    cstate = client.load_save_file()
+
+    # overwrite n+1 ticket with n-1 ticket on server
+    ticket_desynced = generate_nth_ticket(cstate.secret, cstate.n_tickets - 1)
+    sstate.users[0].ticket = ticket_desynced
+    sstate.save()
+
+    background_server.start()
+    time.sleep(0.5) # give server process time to start
     
-#     client.run()
-#     time.sleep(0.5) # give server process time to write to disk
+    client.run()
+    time.sleep(0.5) # give server process time to write to disk
 
-#     # check that tickets are synced after one successful authentication
-#     _, new_client_ticket, new_server_ticket = assert_tickets_synced(background_server, client)
-
-#     # assert ticket have changed after one successful authentication
-#     assert new_server_ticket != current_server_ticket
-#     assert new_client_ticket != current_client_ticket
-
-#     for i in range(12):
-#         client.run()
-#         time.sleep(0.5)
-
-#     # assert that authentication continues when all tickets have been used up
-#     new_secret, _, _ = assert_tickets_synced(background_server, client)
-
-#     # assert that a new secret has been generated
-#     assert first_secret != new_secret
+    # check that tickets are synced after one successful authentication
+    _, _, _ = assert_tickets_synced(background_server, client)
 
 def test_end_to_end_failure(capsys, mocker, background_server, tmp_path):
     """
@@ -153,7 +146,7 @@ def test_end_to_end_failure(capsys, mocker, background_server, tmp_path):
     
     client = Client()
     client.save_file = client_cfg
-    client._resend_packet = 1
+    client._resend_packet = 0
 
     mock_is_auth = mocker.patch.object(Client, "is_authenticated")
     mock_is_auth.side_effect = [False] * 30
