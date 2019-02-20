@@ -85,7 +85,9 @@ crontab -u root -e
     0 22 * * *      iptables-restore < /etc/iptables/rules.v6
 thats it
 (to make sure: service cron restart)
-to see which cron jobs are running for you as a user: crontab -l    
+to see which cron jobs are running for you as a user: crontab -l
+to see if cron job has run: tail -20 /var/log/syslog
+to see if cron daemon is running:  ps uww -C cron
 
 to run:
 cd to magicportknocker dir
