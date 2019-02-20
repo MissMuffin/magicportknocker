@@ -2,3 +2,4 @@
 
 iptables-restore < /etc/iptables/rules.v4
 ip6tables-restore < /etc/iptables/rules.v6
+echo "cron ran iptables reset script"
