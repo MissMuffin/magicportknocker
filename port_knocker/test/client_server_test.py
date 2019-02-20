@@ -40,6 +40,17 @@ def fresh_files(path):
     server_state.add_user("tom", 8, [80], fname=client_fname)
     return server_fname, client_fname
     
+def assert_tickets_synced(background_server, client):
+    sstate = background_server.server.load_savefile()
+    cstate = client.load_save_file()
+
+    new_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
+    new_server_ticket = sstate.get_user(0).ticket
+
+    synced = verify_ticket(new_client_ticket, new_server_ticket)
+    assert synced
+
+    return cstate.secret, new_client_ticket, new_server_ticket
 
 def test_end_to_end(mocker, background_server, tmp_path):
 
@@ -47,19 +58,18 @@ def test_end_to_end(mocker, background_server, tmp_path):
     
     client = Client()
     client.save_file = client_cfg
+    # emulate checking for open ports after a successful authentication
+    ## alternate False, True: first check is if ports are already open to
+    ## avoid authenticating twice
     mock_is_auth = mocker.patch.object(Client, "is_authenticated")
-    # emulate successful auth on first attempt
     mock_is_auth.side_effect = [False, True] * 30
 
     background_server.server.save_file = server_cfg
+    # overwrite open ports script to do nothing for this test
     mocker.patch.object(background_server.server, 'open_ports')
 
-    sstate = background_server.server.load_savefile()
-    cstate = client.load_save_file()
-
-    current_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
-    current_server_ticket = sstate.get_user(0).ticket
-    assert verify_ticket(current_client_ticket, current_server_ticket)
+    # check that inital setup is synced
+    first_secret, current_client_ticket, current_server_ticket = assert_tickets_synced(background_server, client)
 
     background_server.start()
     time.sleep(0.5)
@@ -67,29 +77,22 @@ def test_end_to_end(mocker, background_server, tmp_path):
     client.run()
     time.sleep(0.5)
 
+    # check that tickets are synced after one successful authentication
+    _, new_client_ticket, new_server_ticket = assert_tickets_synced(background_server, client)
 
-    sstate = background_server.server.load_savefile()
-    cstate = client.load_save_file()
-
-    new_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
-    new_server_ticket = sstate.get_user(0).ticket
-
-    print("loaded {}  {}".format(sstate.get_user(0).n_tickets, sstate.get_user(0).ticket))
-
+    # assert ticket have changed after one successful authentication
     assert new_server_ticket != current_server_ticket
     assert new_client_ticket != current_client_ticket
 
-    assert verify_ticket(new_client_ticket, new_server_ticket)
-
-    for i in range(20):
+    for i in range(12):
         client.run()
         time.sleep(0.5)
 
-    sstate = background_server.server.load_savefile()
-    cstate = client.load_save_file()
-    new_client_ticket = generate_nth_ticket(cstate.secret, cstate.n_tickets)
-    new_server_ticket = sstate.get_user(0).ticket
-    assert verify_ticket(new_client_ticket, new_server_ticket)
+    # assert that authentication continues when all tickets have been used up
+    new_secret, _, _ = assert_tickets_synced(background_server, client)
+
+    # assert that a new secret has been generated
+    assert first_secret != new_secret
 
    
 
