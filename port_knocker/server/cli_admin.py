@@ -106,6 +106,8 @@ def update(ctx, id):
 
         state.update_user(user.user_id, new_ports=new_ports, new_symm_key=new_symm_key)
         click.echo("Data has been saved and new user setup file has been generated.")
+        close_ports(user.ip,user.ports)
+        click.echo("All ports associated with this user have been closed.")
 
 @cli.command()
 @click.pass_context
