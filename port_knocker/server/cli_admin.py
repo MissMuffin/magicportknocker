@@ -3,6 +3,8 @@ from port_knocker.util.server_state import ServerState
 from port_knocker.util.auth import generate_secret
 from port_knocker.server.admin_core import *
 import sys
+import os
+from port_knocker.server.iptables import close_ports
 
 @click.group()
 @click.pass_context
@@ -50,7 +52,8 @@ def view(ctx):
 @click.argument("id", required=True, type=int)
 @click.pass_context
 def remove(ctx, id):
-    """Remove user with corresponding id and remove their setup files."""
+    """Remove user with corresponding id, also removes their setup files and removes 
+    them ."""
     state = ctx.obj['state']
     user = state.get_user(int(id))
     # validate id
@@ -60,7 +63,9 @@ def remove(ctx, id):
         show_user_table(user)
         if click.confirm("Remove this user and their setup file?"):
             state.remove_user_by_id(user.user_id)
-            click.echo("Removed user {} and their setup file.".format(user.user_name)) 
+            click.echo("Removed user {} and their setup file.".format(user.user_name))
+            close_ports(user.ip, user.ports)
+            click.echo("Closed all ports associated with this user.")
 
 @cli.command()
 @click.pass_context
@@ -71,6 +76,8 @@ def remove_all(ctx):
     if click.confirm("Remove all users and their setup files? (Currently {} users)".format(n_users)):
         state.remove_all_users()
         click.echo("Removed {} users and their setup files.".format(n_users))
+        os.system("./scripts/iptables-reset") #TODO dont use relative path
+        click.echo("Closed all open ports.")
 
 @cli.command()
 @click.argument('id', required=True, type=int)
