@@ -1,21 +1,34 @@
-# Readme
+# Magic Portknocker
 
-## Setup
+Like a portknocker but not. Magical.
 
-pip install -e .
+Contains server and client programm as well as CLI for administrative functions. Server drops all incomming traffic except UDP traffic on authentication port. Authenticated users' IPs are whitelisted for predetemined port privileges.
 
+[💡 For extensive step by step instructions click here 💡](https://github.com/MissMuffin/magicportknocker/blob/master/instructions.md)
+
+## Requirements
+- python3
+- pip3
+- build-essential
+- python3-setuptools
+- iptables-persistent
+
+## Install
+Either download/clone repo and then
+```
+python3 setup.py install
+```
+or install straight from github
+```
 pip3 install -U --user "git+https://github.com/MissMuffin/magicportknocker#egg=port-knocker"
+```
 
-## 
+## Iptables Setup
+See [here](https://github.com/MissMuffin/magicportknocker/blob/master/iptables.md)
 
-## Run Admin
-python -m port_knocker.server.cli_admin
+## Things to run
+```portknock-admin --help```
 
-## Run Server
-python -m port_knocker.server.cli_server
+```portknock-server --help```
 
-## Run Client
-python -m port_knocker.client.cli_client
-
-## run nginx to allow tcp connection for client to mock auth testing
-sudo docker run -p 80:80 nginx
+```portknock-client --help```
