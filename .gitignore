@@ -8,3 +8,7 @@ Pipfile.lock
 *.log
 __pycache__
 /.coverage
+build/
+dist/
+nohup*
+server.pid
