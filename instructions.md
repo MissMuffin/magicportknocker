@@ -78,7 +78,7 @@ ps uww -C cron
     ```
     This will save the pid of the server process to the file server.pic for easier stopping.
     ```
-    kill -9 pid
+    kill pid
     ```
 
 The server logs successful and failed authentication attempts to the file ```security.log```
