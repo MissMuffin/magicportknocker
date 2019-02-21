@@ -49,7 +49,7 @@ class Client():
         
         # TODO put generate ticket in clientstate? wrong responsibility here
         ticket = generate_nth_ticket(secret, n_tickets - n)
-        print(base64.b64encode(ticket))
+        # print(base64.b64encode(ticket))
        
         # TODO make it so that new secret is only generated once
         new_secret = new_secret
@@ -101,23 +101,23 @@ class Client():
                                                             new_secret=new_secret)
             for i in range(resend_packet + 1):
                 sock.sendto(payload, (self._state.server_ip, self._state.auth_port))
-                print("sending ticket")
+                click.echo("sending ticket")
                 timeout = 0.25 * i * 3
                 if self.is_authenticated(self._state.server_ip, int(self._state.ports[0])): # TODO verify ALL ports are open
-                    print('Success! Ports are now open!')
+                    click.echo('Success! Ports are now open!')
                     self._state.update_state(n + 1, new_secret, new_n) # Something goes wrong here
                     finished = True
                     break
                 else:
-                    print("retrying in {timeout} seconds...".format(timeout=timeout))
+                    click.echo("retrying in {timeout} seconds...".format(timeout=timeout))
                     time.sleep(timeout)
 
             if finished:
                 break
-            print('Retrying with next ticket...')
+            click.echo('Retrying with next ticket...')
 
         if not finished:
-            print('Could not authenticate with {} tickets. Contact admin'.format(tickets_to_try))
+            click.echo('Could not authenticate with {} tickets. Contact admin'.format(tickets_to_try))
 
         sock.close()
         return new_secret, new_n
@@ -135,7 +135,7 @@ class Client():
                     
         # Skip the authencation altogether if ports are already open.
         if all(self.is_authenticated(self._state.server_ip, int(port)) for port in self._state.ports):
-            print('No authentication needed, privileged ports are already open!')
+            click.echo('No authentication needed, privileged ports are already open!')
             return
 
         self.authenticate(ip_addr=ip_addr, resend_packet=self._resend_packet)        

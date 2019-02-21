@@ -9,7 +9,7 @@ def prompt_username():
         click.echo("Input was empty.")
         return prompt_username()
     if any(c in user_name for c in blacklisted_characters): 
-        print("{} contains illegal characters ({})".format(user_name, blacklisted_characters))
+        click.echo("{} contains illegal characters ({})".format(user_name, blacklisted_characters))
         return prompt_username()
     return user_name
 

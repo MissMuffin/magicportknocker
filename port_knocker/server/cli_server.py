@@ -45,8 +45,8 @@ class Server():
 
         # bind socket
         server_address = ('0.0.0.0', state.auth_port)
-        print(server_address)
-        print(state.auth_port)
+        # print(server_address)
+        # print(state.auth_port)
         sock.bind(server_address)
         click.echo('listening on {} port {}'.format(*server_address))
         click.echo('listening...')
@@ -76,10 +76,10 @@ class Server():
                 
                 sec_logger.info("fname: {}".format(state._save_file))
                 sec_logger.info("old: {}".format(user_state.ticket))
-                print("new: {}".format(packet.ticket))
-                print("packet new n: {}".format(packet.new_n))
-                print("o: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
-                print("o: {}  {}".format(user_state.n_tickets, user_state.ticket))
+                # print("new: {}".format(packet.ticket))
+                # print("packet new n: {}".format(packet.new_n))
+                # print("o: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
+                # print("o: {}  {}".format(user_state.n_tickets, user_state.ticket))
 
                 # update server state and save
                 if packet.new_n > 0:
@@ -88,11 +88,11 @@ class Server():
                 else:
                     user_state.n_tickets -= 1
                     user_state.ticket = packet.ticket
-                print("1: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
-                print("1: {}  {}".format(user_state.n_tickets, user_state.ticket))
+                # print("1: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
+                # print("1: {}  {}".format(user_state.n_tickets, user_state.ticket))
                 state.save()
-                print("2: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
-                print("2: {}  {}".format(user_state.n_tickets, user_state.ticket))
+                # print("2: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
+                # print("2: {}  {}".format(user_state.n_tickets, user_state.ticket))
 
 
                 # open ports
