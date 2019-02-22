@@ -8,7 +8,7 @@ from port_knocker.util.auth import verify_ticket
 from port_knocker.util.packet import Packet
 from port_knocker.util.security_logger import sec_logger
 from port_knocker.util.server_state import ServerState
-
+from elevate import elevate
 
 class Server():
 
@@ -108,6 +108,8 @@ def main():
     '''
     Runs authentication server.
     '''
+    # elevate this to root for modifying iptables
+    elevate(graphical=False)
     Server().run()
 
 if __name__ == "__main__":
