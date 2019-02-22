@@ -6,13 +6,6 @@ Contains server and client programm as well as CLI for administrative functions.
 
 [💡 For extensive step by step instructions click here 💡](https://github.com/MissMuffin/magicportknocker/blob/master/instructions.md)
 
-## Requirements
-- python3
-- pip3
-- build-essential
-- python3-setuptools
-- iptables-persistent
-
 ## Install
 Either download/clone repo and then
 ```
