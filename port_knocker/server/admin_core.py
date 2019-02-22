@@ -134,16 +134,16 @@ def configure_server(state):
 
 def show_user_table(users):
     data = []
-    data.append(["Id", "User name", "Remaining tickets", "Ports"])
+    data.append(["Id", "User name", "Ports"])
     
     if isinstance(users, list):
         if len(users) > 0:
             for user in users:
-                data.append([user.user_id, user.user_name, user.n_tickets, " ".join(user.ports)])
+                data.append([user.user_id, user.user_name, " ".join(user.ports)])
         else:
-            data.append(["", "", "", ""])
+            data.append(["", "", ""])
     else:
-        data.append([users.user_id, users.user_name, users.n_tickets, " ".join(users.ports)])
+        data.append([users.user_id, users.user_name, " ".join(users.ports)])
 
     table = AsciiTable(data)
     click.echo(table.table)

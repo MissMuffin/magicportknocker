@@ -16,7 +16,7 @@ class ServerStateUser():
     symm_key = b"SYMM_KEY"
     ports = []
 
-    def __init__(self, user_id, user_name, ports, n_tickets=10,
+    def __init__(self, user_id, user_name, ports, n_tickets=0,
                 symm_key=None, ticket=None):
 
         self.user_id = user_id
@@ -37,7 +37,6 @@ class ServerStateUser():
         # get dict for saving as json serverside
         return {"user_id": self.user_id,
                 "user_name": self.user_name,
-                "n_tickets": self.n_tickets,
                 "ticket": b64encode(self.ticket).decode(),
                 "symm_key":b64encode(self.symm_key).decode(),
                 "ports": self.ports}
@@ -111,7 +110,6 @@ class ServerState():
             for user in state_dict["users"]:
                 self.users.append(ServerStateUser(user_id=user["user_id"],
                                                   user_name=user["user_name"],
-                                                  n_tickets=user["n_tickets"],
                                                   ticket=b64decode(user["ticket"]),
                                                   symm_key=b64decode(user["symm_key"]),
                                                   ports=user["ports"]))

@@ -83,10 +83,8 @@ class Server():
 
                 # update server state and save
                 if packet.new_n > 0:
-                    user_state.n_tickets = packet.new_n
-                    user_state.ticket = packet.new_ticket   
+                    user_state.ticket = packet.new_ticket
                 else:
-                    user_state.n_tickets -= 1
                     user_state.ticket = packet.ticket
                 # print("1: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
                 # print("1: {}  {}".format(user_state.n_tickets, user_state.ticket))
