@@ -82,21 +82,25 @@ ps uww -C cron
 
 ### Create service to automatically start the server on system start
 1. Copy file from systemd_file to /etc/systemd/system/
-2. Start the service
+2. Reload systemd
+   ```
+   systemctl daemon-reload
+   ```
+3. Start the service
     ```
     systemctl start mpks.service
     ```
-3. Configure automatic start on system boot
+4. Configure automatic start on system boot
     ```
     systemctl enable mpks.service
     ```
-4. Reboot and check if active with 
+5. Reboot and check if active with 
    ```
    systemctl is-active mpks.service
    ``` 
 
 
-The server logs successful and failed authentication attempts to the file ```security.log```
+The server logs successful and failed authentication attempts to the file ```security.log``` in the repository directory.
 
 ## Authenticate using the client
 Note: client authentication will only be succesful if something is listening on the user's privileged ports so that a tcp connection can be established. After an authentication attempt the client tries to tcp connect to all the user's privileged ports in order to determine wether the authentication was succesful. An easy solution for this is to serve a simple webpage on the ports in question using nginx.
@@ -106,3 +110,17 @@ Note: client authentication will only be succesful if something is listening on 
     ```
     portknock-client
     ```
+
+## After changing things
+
+Changed project: reinstall setup.py
+```
+python setup.py install
+```
+
+Changed service file: reload daemon, restart service
+```
+systemctl daemon-reload
+
+systemctl restart mpks
+```
