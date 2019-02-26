@@ -49,7 +49,9 @@ class Server():
         # print(state.auth_port)
         sock.bind(server_address)
         click.echo('listening on {} port {}'.format(*server_address))
+        sec_logger.warn('listening on {} port {}'.format(*server_address))
         click.echo('listening...')
+        sec_logger.info('listening...')
 
         while True:
             payload, address = sock.recvfrom(4096) # cant trust this address
