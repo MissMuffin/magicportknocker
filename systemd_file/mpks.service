@@ -1,14 +1,26 @@
 [Unit]
 Description=MagicPortKnocker server (https://github.com/MissMuffin/magicportknocker)
+
+# service will only attempt starting after these are ready
 After=network.target
+
+# system will attempt to restart service forever
+# default behavior: if 5 restarts fail within 10 sec system will give up on restarting service 
 StartLimitIntervalSec=0
 
 [Service]
 Type=simple
+
+# restart on exit
 Restart=always
+
+# number of seconds system wil wait before attempting restart
 RestartSec=1
+
 User=root
 ExecStart=/usr/bin/python3 /usr/local/bin/portknock-server
+
+# directory from where the service is started
 WorkingDirectory=/home/ubuntu/magicportknocker/
 
 [Install]
