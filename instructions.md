@@ -62,7 +62,6 @@ ps uww -C cron
 ```
 
 ## Run the server
-
 1. 
     ```
     cd to magicportknocker dir
@@ -80,6 +79,22 @@ ps uww -C cron
     ```
     kill pid
     ```
+
+### Create service to automatically start the server on system start
+1. Copy file from systemd_file to /etc/systemd/system/
+2. Start the service
+    ```
+    systemctl start mpks.service
+    ```
+3. Configure automatic start on system boot
+    ```
+    systemctl enable mpks.service
+    ```
+4. Reboot and check if active with 
+   ```
+   systemctl is-active mpks.service
+   ``` 
+
 
 The server logs successful and failed authentication attempts to the file ```security.log```
 
