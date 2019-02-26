@@ -99,6 +99,8 @@ ps uww -C cron
 The server logs successful and failed authentication attempts to the file ```security.log```
 
 ## Authenticate using the client
+Note: client authentication will only be succesful if something is listening on the user's privileged ports so that a tcp connection can be established. After an authentication attempt the client tries to tcp connect to all the user's privileged ports in order to determine wether the authentication was succesful. An easy solution for this is to serve a simple webpage on the ports in question using nginx.
+
 1. Make sure you have the ```save_file.json``` from the user_setup dir on the server
 2. 
     ```
