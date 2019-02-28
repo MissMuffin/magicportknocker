@@ -47,7 +47,6 @@ class Client():
 
     def create_payload(self, n, secret, n_tickets, ip_addr, user_id, symm_key, new_secret=None, new_n=0):
         
-        # TODO put generate ticket in clientstate? wrong responsibility here
         ticket = generate_nth_ticket(secret, n_tickets - n)
        
         new_secret = new_secret
