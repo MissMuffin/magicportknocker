@@ -64,8 +64,11 @@ def remove(ctx, id):
         if click.confirm("Remove this user and their setup file?"):
             state.remove_user_by_id(user.user_id)
             click.echo("Removed user {} and their setup file.".format(user.user_name))
-            # close_ports(user.ip,user.ports) TODO make possible
+
+            # TODO possible future feature
+            # close_ports(user.ip,user.ports)
             # click.echo("All ports associated with this user have been closed.")
+
             click.echo("If user was authenticated, they can still connect.")
             if click.confirm("Reset firewall to close all ports?"):
                 os.system("./scripts/iptables-reset")
@@ -82,7 +85,7 @@ def remove_all(ctx):
     if click.confirm("Remove all users and their setup files? (Currently {} users)".format(n_users)):
         state.remove_all_users()
         click.echo("Removed {} users and their setup files.".format(n_users))
-        os.system("./scripts/iptables-reset") #TODO dont use relative path
+        os.system("./scripts/iptables-reset") #TODO possible future feature: dont use relative path
         click.echo("Closed all open ports.")
 
 @cli.command()
@@ -112,8 +115,11 @@ def update(ctx, id):
 
         state.update_user(user.user_id, new_ports=new_ports, new_symm_key=new_symm_key)
         click.echo("Data has been saved and new user setup file has been generated.")
-        # close_ports(user.ip,user.ports) TODO make possible
+
+        # TODO possible future feature
+        # close_ports(user.ip,user.ports)
         # click.echo("All ports associated with this user have been closed.")
+
         click.echo("If user was authenticated, they can still connect.")
         if click.confirm("Reset firewall to close all ports?"):
             os.system("./scripts/iptables-reset")
