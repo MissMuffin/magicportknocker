@@ -4,8 +4,8 @@ from base64 import b64encode, b64decode
 from pathlib2 import Path
 from .auth import generate_secret, generate_nth_ticket
 import shutil
-
-# TODO fix secret vs ticket issue (saving!)
+import appdirs
+from pathlib2 import Path
 
 class ServerStateUser():
     user_id = 0
@@ -70,13 +70,18 @@ class ServerStateUser():
 
 
 class ServerState():
+
+    appname = "MagicPortKnocker"
+    appauthor = "Bianca Ploch"
+    _savedir = appdirs.user_data_dir(appname, appauthor)
+    _savefile = _savedir + "server_state.json"
+    
     id_count = 0
     users = []
-    _savefile = "server_state.json"
     auth_port = ""
     server_ip = ""
 
-    def __init__(self, server_ip="", auth_port="", id_count=0, users=None, _savefile="server_state.json"):
+    def __init__(self, server_ip="", auth_port="", id_count=0, users=None, _savefile=None):
         self.id_count = id_count
         self.server_ip = server_ip
         self.auth_port = auth_port
@@ -87,10 +92,12 @@ class ServerState():
             self.users = []
         else:
             self.users = users
-        self._savefile = _savefile
 
-    #  saves user id count and user data to json
+        if _savefile != None:
+            self._savefile = _savefile
+
     def save(self):
+        Path(self._savedir).mkdir(exist_ok=True, parents=True)
         state = {}
         state["id_count"] = self.id_count
         state["users"] = []
@@ -101,7 +108,6 @@ class ServerState():
         with open(self._savefile, "w+") as f:
             json.dump(state, f, indent=4)
 
-    # loads user id count and user data from json
     def load(self):
         with open(self._savefile, "r") as f:
             state_dict = json.load(f)
@@ -115,7 +121,6 @@ class ServerState():
             self.server_ip = state_dict["server_ip"]
             self.auth_port = int(state_dict["auth_port"])
 
-    #  adds new user and saves new user to json
     def add_user(self, user_name, n_tickets, ports, fname=None):
         new_user = ServerStateUser(user_id=self.id_count,
                                    user_name=user_name,
