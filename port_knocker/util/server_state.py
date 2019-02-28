@@ -74,7 +74,7 @@ class ServerState():
     appname = "MagicPortKnocker"
     appauthor = "Bianca Ploch"
     _savedir = appdirs.user_data_dir(appname, appauthor)
-    _savefile = _savedir + "server_state.json"
+    _savefile = _savedir + "/server_state.json"
     
     id_count = 0
     users = []
