@@ -36,7 +36,7 @@ def close_ports(ip, ports):
             try:
                 chain.delete_rule(rule)
             except:
-                pass #TODO do something else here?
+                pass # ignore if rules does not exist
     table.commit()
     sec_logger.info("closed ports {} for ip {}".format(ports, ip))
 

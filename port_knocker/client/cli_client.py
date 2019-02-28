@@ -49,9 +49,7 @@ class Client():
         
         # TODO put generate ticket in clientstate? wrong responsibility here
         ticket = generate_nth_ticket(secret, n_tickets - n)
-        # print(base64.b64encode(ticket))
        
-        # TODO make it so that new secret is only generated once
         new_secret = new_secret
         new_n = new_n
         new_ticket = b""    
@@ -104,7 +102,7 @@ class Client():
                 timeout = 0.25 * i * 3
                 if self.is_authenticated(self._state.server_ip, int(self._state.ports[0])): # TODO verify ALL ports are open
                     click.echo('Success! Ports are now open!')
-                    self._state.update_state(n + 1, new_secret, new_n) # Something goes wrong here
+                    self._state.update_state(n + 1, new_secret, new_n)
                     finished = True
                     break
                 else:

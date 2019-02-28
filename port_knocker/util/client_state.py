@@ -96,8 +96,5 @@ class ClientState():
             self.secret = new_secret
         else:
             self.n_tickets -= n_ticket_sent
-        self.save() # TODO save here of in cli?
-
-    def remaining_tickets(self):
-        for i in range(self.n_tickets):
-            yield self.n_tickets - i
+        self.save()
+ 
