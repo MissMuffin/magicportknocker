@@ -70,7 +70,7 @@ ps uww -C cron
     ```
     portknock-admin add
     ```
-3. Then copy /user_setup/0_username/save_file.json to magicportknocker dir on client computer
+3. Then copy /user_setup/username_id/setup_file.json to magicportknocker dir on client computer
 4. Start server
     ```
     nohup portknock-server > /dev/null 2>&1 & echo $! > server.pid
@@ -105,7 +105,7 @@ The server logs successful and failed authentication attempts to the file ```sec
 ## Authenticate using the client
 Note: client authentication will only be succesful if something is listening on the user's privileged ports so that a tcp connection can be established. After an authentication attempt the client tries to tcp connect to all the user's privileged ports in order to determine wether the authentication was succesful. An easy solution for this is to serve a simple webpage on the ports in question using nginx.
 
-1. Make sure you have the ```save_file.json``` from the user_setup dir on the server
+1. Make sure you have the ```setup_file.json``` from the user_setup dir on the server
 2. 
     ```
     portknock-client

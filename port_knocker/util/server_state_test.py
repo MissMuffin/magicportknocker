@@ -8,7 +8,7 @@ import shutil
 @pytest.fixture
 def state():
     filename = str(uuid.uuid4()) + ".json"
-    state = ServerState(save_file=filename, server_ip="localhost", auth_port="7889")
+    state = ServerState(_savefile=filename, server_ip="localhost", auth_port="7889")
     state.remove_all_users()
     yield state
     os.remove(filename)
@@ -16,8 +16,8 @@ def state():
 
 def test_create_and_save(state):
     state.save()
-    print(state._save_file)
-    loaded = ServerState(save_file=state._save_file)
+    print(state._savefile)
+    loaded = ServerState(_savefile=state._savefile)
     loaded.load()
     assert loaded.id_count == 0 and isinstance(loaded.users, list)
     assert state.id_count == loaded.id_count and state.users == loaded.users
@@ -33,7 +33,7 @@ def test_add_one(state):
 def test_add_one_and_load(state):
     state.add_user("tim", 10, [1, 2, 3])
     tim = state.get_user(0)
-    loaded = ServerState(save_file=state._save_file)
+    loaded = ServerState(_savefile=state._savefile)
     loaded.load()
     loaded_tim = loaded.get_user(0)
     assert len(loaded.users) == len(state.users)
@@ -52,7 +52,7 @@ def test_remove_user(state):
     assert len(state.users) == 1
     assert removed.user_name == "karl"
 
-    loaded = ServerState(save_file=state._save_file)
+    loaded = ServerState(_savefile=state._savefile)
     loaded.load()
     assert len(loaded.users) == len(state.users)
     assert loaded.id_count == state.id_count
@@ -71,9 +71,9 @@ def test_generate_client_setup_file(state):
     state.add_user("tim", 6, [56, 76])
     user = state.get_user(0)
     user.generate_client_setup_file(state.server_ip, state.auth_port)
-    setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
+    setup_file_path = "user_setups/{}_{}/setup_file.json".format(user.user_name, user.user_id)
     setup, server_ip, auth_port = load_setup(setup_file_path)
-    shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
+    shutil.rmtree("user_setups/{}_{}".format(user.user_name, user.user_id))
     assert setup["user_id"] == user.user_id
     assert user.user_name == setup["user_name"]
     assert user.symm_key == setup["symm_key"]
@@ -84,7 +84,7 @@ def test_update(state):
     state.add_user("tim", 6, [56, 76])
     user =  state.get_user(0)
     user.generate_client_setup_file(state.server_ip, state.auth_port)
-    setup_file_path = "user_setups/{}_{}/save_file.json".format(user.user_id, user.user_name)
+    setup_file_path = "user_setups/{}_{}/setup_file.json".format(user.user_name, user.user_id)
     setup, _, _ = load_setup(setup_file_path)
 
     new_ports = [90, 89]
@@ -92,7 +92,7 @@ def test_update(state):
     state.update_user(user.user_id, new_ports=new_ports, new_symm_key=new_symm)
 
     updated_setup, _, _ = load_setup(setup_file_path)
-    shutil.rmtree("user_setups/{}_{}".format(user.user_id, user.user_name))
+    shutil.rmtree("user_setups/{}_{}".format(user.user_name, user.user_id))
 
     assert setup["user_id"] == updated_setup["user_id"]
     assert updated_setup["ports"] == new_ports

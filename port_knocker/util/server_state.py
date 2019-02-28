@@ -52,12 +52,10 @@ class ServerStateUser():
     def generate_client_setup_file(self, server_ip, auth_port, fname=None):
 
         if not fname:
-            # check if dir for user exists
             cwd = os.getcwd()
-            folder_path = cwd + "/user_setups/{}_{}".format(self.user_id, self.user_name)
+            folder_path = cwd + "/user_setups/{}_{}".format(self.user_name, self.user_id)
             Path(folder_path).mkdir(exist_ok=True, parents=True)
-            # build file path
-            setup_file = folder_path + "/save_file.json"
+            setup_file = folder_path + "/setup_file.json"
         else:
             setup_file = fname
 
@@ -74,11 +72,11 @@ class ServerStateUser():
 class ServerState():
     id_count = 0
     users = []
-    _save_file = "server_state.json"
+    _savefile = "server_state.json"
     auth_port = ""
     server_ip = ""
 
-    def __init__(self, server_ip="", auth_port="", id_count=0, users=None, save_file="server_state.json"):
+    def __init__(self, server_ip="", auth_port="", id_count=0, users=None, _savefile="server_state.json"):
         self.id_count = id_count
         self.server_ip = server_ip
         self.auth_port = auth_port
@@ -89,7 +87,7 @@ class ServerState():
             self.users = []
         else:
             self.users = users
-        self._save_file = save_file
+        self._savefile = _savefile
 
     #  saves user id count and user data to json
     def save(self):
@@ -100,12 +98,12 @@ class ServerState():
             state["users"].append(user.get_dict())
         state["server_ip"] = self.server_ip
         state["auth_port"] = str(self.auth_port)
-        with open(self._save_file, "w+") as f:
+        with open(self._savefile, "w+") as f:
             json.dump(state, f, indent=4)
 
     # loads user id count and user data from json
     def load(self):
-        with open(self._save_file, "r") as f:
+        with open(self._savefile, "r") as f:
             state_dict = json.load(f)
             for user in state_dict["users"]:
                 self.users.append(ServerStateUser(user_id=user["user_id"],
@@ -146,7 +144,7 @@ class ServerState():
 
     def remove_user_setup(self, user_id, user_name):
         cwd = os.getcwd()
-        file_path = cwd + "/user_setups/{}_{}".format(user_id, user_name)
+        file_path = cwd + "/user_setups/{}_{}".format(user_name, user_id)
         shutil.rmtree(file_path, ignore_errors=True)
 
     def remove_all_user_setups(self):

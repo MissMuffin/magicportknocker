@@ -1,8 +1,17 @@
 import json
 from base64 import b64encode, b64decode
+import appdirs
+from pathlib2 import Path
+import click
 
 class ClientState():
-    _savefile = "client_state.json"
+
+    appname = "MagicPortKnocker"
+    appauthor = "Bianca Ploch"
+
+    _savedir = appdirs.user_data_dir(appname, appauthor)
+    _savefile = _savedir + "/savefile.json"
+    _setup_file = "setup_file.json"
     
     user_id = 0
     user_name = ""
@@ -37,8 +46,8 @@ class ClientState():
                 "auth_port": self.auth_port}
 
     @staticmethod
-    def load(save_file):
-        with open(save_file, "r") as f:
+    def _load(savefile):
+        with open(savefile, "r") as f:
             client_info = json.load(f)
             user_info = client_info["user"]
             state = ClientState( user_id=user_info["user_id"],
@@ -49,10 +58,34 @@ class ClientState():
                                 ports=user_info["ports"],
                                 server_ip=client_info["server_ip"],
                                 auth_port=client_info["auth_port"])
-            state._savefile = save_file
             return state
 
+    @staticmethod
+    def load():
+        try:
+            # check for savefile
+            return ClientState._load(ClientState._savefile)
+        except:
+            click.echo("Savefile not found. Looking for setup file...")
+        
+        try:
+            # check for setup file
+            state = ClientState._load(ClientState._setup_file)
+            click.echo("Setup file found. Creating savefile...")
+        except:
+            raise FileNotFoundError("Setup file not found. Contact your admin.")
+        
+        try:
+            # create savefile from setup file
+            state.save()
+            click.echo("Savefile successfully created.")
+        except Exception as e:
+            raise Exception("Could not create savefile. {}".format(e))
+
+        return state
+
     def save(self):
+        Path(self._savedir).mkdir(exist_ok=True, parents=True)
         setup = self.get_dict()
         with open(self._savefile, "w+") as f:
             json.dump(setup, f, indent=4)

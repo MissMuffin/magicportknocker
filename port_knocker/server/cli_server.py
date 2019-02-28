@@ -13,10 +13,10 @@ from elevate import elevate
 class Server():
 
     stop = False
-    save_file = "server_state.json"
+    savefile = "server_state.json"
 
     def load_savefile(self):
-        state = ServerState(save_file=self.save_file)
+        state = ServerState(_savefile=self.savefile)
         try:
             state.load()
             return state
@@ -76,7 +76,7 @@ class Server():
             if verify_ticket(received_ticket=packet.ticket, server_ticket=user_state.ticket):
                 sec_logger.info("{} ({}) was successfully authenticated".format(user_state.user_name, user_state.user_id))
                 
-                sec_logger.info("fname: {}".format(state._save_file))
+                sec_logger.info("fname: {}".format(state._savefile))
                 sec_logger.info("old: {}".format(user_state.ticket))
                 # print("new: {}".format(packet.ticket))
                 # print("packet new n: {}".format(packet.new_n))

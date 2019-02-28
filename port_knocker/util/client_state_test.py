@@ -7,7 +7,7 @@ import uuid
 def server_state_setup():
     filename = str(uuid.uuid4()) + ".json"
     setup_file_path = str(uuid.uuid4()) + ".json"
-    server_state = ServerState(save_file=filename)
+    server_state = ServerState(_savefile=filename)
     server_state.remove_all_users()
     server_state.add_user("karl", 100, [2, 44])
     user = server_state.get_user(0)
@@ -26,12 +26,12 @@ def server_state_setup():
 @pytest.fixture
 def client_state(server_state_setup):
     _, setup_file_path = server_state_setup
-    client_state = ClientState.load(setup_file_path)
+    client_state = ClientState._load(setup_file_path)
     return client_state    
 
 def test_import_setup(server_state_setup):
     server_state, setup_file_path = server_state_setup
-    client_state = ClientState.load(setup_file_path)
+    client_state = ClientState._load(setup_file_path)
     user = server_state.get_user(0)
     assert client_state.user_name == user.user_name
     assert client_state.symm_key == user.symm_key
@@ -40,7 +40,7 @@ def test_save_load(client_state):
     filename = str(uuid.uuid4()) + ".json"
     client_state._savefile = filename
     client_state.save()
-    loaded_client_state = ClientState.load(save_file=filename)
+    loaded_client_state = ClientState._load(savefile=filename)
     assert client_state.symm_key == loaded_client_state.symm_key
     assert client_state.ports == loaded_client_state.ports
     assert client_state.auth_port == loaded_client_state.auth_port

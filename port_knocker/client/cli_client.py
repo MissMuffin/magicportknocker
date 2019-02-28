@@ -11,10 +11,10 @@ from port_knocker.util.auth import generate_nth_ticket, generate_secret, hash
 from port_knocker.util.client_state import ClientState
 from port_knocker.util.packet import Packet
 
+import appdirs
 
 class Client():
 
-    save_file = "save_file.json"
     _state = None # type: ClientState
     _resend_packet = 5
 
@@ -68,12 +68,11 @@ class Client():
 
         return p.pack(symm_key), new_secret, new_n
 
-    def load_save_file(self):
+    def load_savefile(self):
         try:
-            # check if save file exists
-            return ClientState.load(self.save_file)
-        except:
-            click.echo("Save file not found. Import save file from admin.")
+            return ClientState.load()
+        except Exception as e:
+            click.echo(e)
             sys.exit(1)
 
     def authenticate(self, ip_addr=None, tickets_to_try=3, resend_packet=5):
@@ -124,7 +123,7 @@ class Client():
 
     def run(self, server_in_private_network=False):        
         # load client state        
-        self._state = self.load_save_file()
+        self._state = self.load_savefile()
 
         # get ip address
         ip_addr = self.get_ip(private=server_in_private_network)
