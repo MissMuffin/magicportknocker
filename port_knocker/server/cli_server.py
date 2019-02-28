@@ -13,10 +13,9 @@ from elevate import elevate
 class Server():
 
     stop = False
-    savefile = "server_state.json"
 
     def load_savefile(self):
-        state = ServerState(_savefile=self.savefile)
+        state = ServerState()
         try:
             state.load()
             return state
