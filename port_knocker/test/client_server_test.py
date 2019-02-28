@@ -64,13 +64,18 @@ def test_end_to_end(mocker, background_server, tmp_path):
     mock_is_auth.side_effect = [False, True] * 30
 
     # overwrite loading to make use of temporary files
-    def overload_load():
+    def client_overwrite_load():
         cstate = ClientState._load(client_cfg)
         cstate._savefile = client_cfg
         return cstate
-    client.load_savefile = overload_load
+    client.load_savefile = client_overwrite_load
 
-    background_server.server.savefile = server_cfg
+    def server_overwrite_load():
+        sstate = ServerState(_savefile=server_cfg)
+        sstate.load()
+        return sstate
+    background_server.server.load_savefile = server_overwrite_load
+
     # overwrite open ports script to do nothing for this test
     mocker.patch.object(background_server.server, 'open_ports')
 
@@ -119,14 +124,18 @@ def test_end_to_end_with_desync(mocker, background_server, tmp_path):
     mock_is_auth = mocker.patch.object(Client, "is_authenticated")
     mock_is_auth.side_effect = [False, False, False, True] * 5
 
-    # overwrite loading to make use of temporary files
-    def overload_load():
+    def client_overwrite_load():
         cstate = ClientState._load(client_cfg)
         cstate._savefile = client_cfg
         return cstate
-    client.load_savefile = overload_load
+    client.load_savefile = client_overwrite_load
 
-    background_server.server.savefile = server_cfg
+    def server_overwrite_load():
+        sstate = ServerState(_savefile=server_cfg)
+        sstate.load()
+        return sstate
+    background_server.server.load_savefile = server_overwrite_load
+
     # overwrite open ports script to do nothing for this test
     mocker.patch.object(background_server.server, 'open_ports')
 
@@ -159,12 +168,17 @@ def test_end_to_end_failure(capsys, mocker, background_server, tmp_path):
     client = Client()
     client._resend_packet = 0
 
-    # overwrite loading to make use of temporary files
-    def overload_load():
+    def client_overwrite_load():
         cstate = ClientState._load(client_cfg)
         cstate._savefile = client_cfg
         return cstate
-    client.load_savefile = overload_load
+    client.load_savefile = client_overwrite_load
+
+    def server_overwrite_load():
+        sstate = ServerState(_savefile=server_cfg)
+        sstate.load()
+        return sstate
+    background_server.server.load_savefile = server_overwrite_load
 
     mock_is_auth = mocker.patch.object(Client, "is_authenticated")
     mock_is_auth.side_effect = [False] * 30
