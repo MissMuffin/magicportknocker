@@ -97,7 +97,7 @@ ps uww -C cron
 5. Reboot and check if active with 
    ```
    systemctl is-active mpks.service
-   ``` 
+   ```
 
 
 The server logs successful and failed authentication attempts to the file ```security.log``` in the repository directory.
