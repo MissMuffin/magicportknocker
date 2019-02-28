@@ -99,7 +99,7 @@ class Client():
                 sock.sendto(payload, (self._state.server_ip, self._state.auth_port))
                 click.echo("sending ticket")
                 timeout = 0.25 * i * 3
-                if self.is_authenticated(self._state.server_ip, int(self._state.ports[0])): # TODO verify ALL ports are open
+                if all(self.is_authenticated(self._state.server_ip, int(port)) for port in self._state.ports):
                     click.echo('Success! Ports are now open!')
                     self._state.update_state(n + 1, new_secret, new_n)
                     finished = True
