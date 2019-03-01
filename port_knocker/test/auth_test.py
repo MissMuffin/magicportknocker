@@ -3,7 +3,6 @@ from port_knocker.util.auth import *
 
 def generate_tokens(secret, number_of_tokens):
     tickets = list()
-    # init first entry
     tickets.append(hash(secret))
 
     for _ in range(number_of_tokens - 1):

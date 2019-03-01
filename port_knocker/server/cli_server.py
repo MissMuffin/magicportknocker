@@ -40,24 +40,19 @@ class Server():
                 raise Exception("User {user_id} does not exist".format(user_id=user_id))
             return user_state.symm_key
 
-        # create a UDP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        # bind socket
         server_address = ('0.0.0.0', state.auth_port)
-        # print(server_address)
-        # print(state.auth_port)
         sock.bind(server_address)
+
         click.echo('listening on {} port {}'.format(*server_address))
         sec_logger.warn('listening on {} port {}'.format(*server_address))
         click.echo('listening...')
         sec_logger.info('listening...')
 
         while True:
-            payload, address = sock.recvfrom(4096) # cant trust this address
+            payload, address = sock.recvfrom(4096) # cant trust this address to be clients real address
             click.echo('received {} bytes from {}'.format(len(payload), address))
 
-            # try unpacking
             try:
                 packet = Packet.unpack(payload, key_finder)
             except Exception as e:
@@ -78,22 +73,13 @@ class Server():
                 
                 sec_logger.info("fname: {}".format(state._savefile))
                 sec_logger.info("old: {}".format(user_state.ticket))
-                # print("new: {}".format(packet.ticket))
-                # print("packet new n: {}".format(packet.new_n))
-                # print("o: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
-                # print("o: {}  {}".format(user_state.n_tickets, user_state.ticket))
 
                 # update server state and save
                 if packet.new_n > 0:
                     user_state.ticket = packet.new_ticket
                 else:
                     user_state.ticket = packet.ticket
-                # print("1: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
-                # print("1: {}  {}".format(user_state.n_tickets, user_state.ticket))
                 state.save()
-                # print("2: {}  {}".format(state.users[0].n_tickets, state.users[0].ticket))
-                # print("2: {}  {}".format(user_state.n_tickets, user_state.ticket))
-
 
                 # open ports
                 click.echo("ticket was correct")

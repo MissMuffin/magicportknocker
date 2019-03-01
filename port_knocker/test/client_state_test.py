@@ -24,8 +24,6 @@ def server_state_setup():
     os.remove(filename)
     os.remove(setup_file_path)
 
-# client state
-# prepared from setup file import
 @pytest.fixture
 def client_state(server_state_setup):
     _, setup_file_path = server_state_setup

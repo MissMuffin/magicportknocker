@@ -4,7 +4,6 @@ from elevate import elevate
 from port_knocker.util.security_logger import sec_logger
 
 
-# add user port privileges to iptables
 def open_ports(ip, ports):
     table = iptc.Table(iptc.Table.FILTER)
     chain = iptc.Chain(table, "INPUT")

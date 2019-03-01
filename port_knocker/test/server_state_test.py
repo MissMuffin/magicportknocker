@@ -16,7 +16,6 @@ def state():
     yield state
     os.remove(filename)
 
-
 def test_create_and_save(state):
     state.save()
     print(state._savefile)
@@ -26,12 +25,10 @@ def test_create_and_save(state):
     assert state.id_count == loaded.id_count and state.users == loaded.users
     assert state.server_ip == loaded.server_ip
 
-
 def test_add_one(state):
     state.add_user("tim", 10, [1, 2, 3])
     assert state.users[0].user_name == "tim"
     assert state.id_count == 1
-
 
 def test_add_one_and_load(state):
     state.add_user("tim", 10, [1, 2, 3])
@@ -43,7 +40,6 @@ def test_add_one_and_load(state):
     assert loaded.id_count == state.id_count
     assert loaded_tim.user_name == tim.user_name
     assert loaded_tim.symm_key == tim.symm_key
-
 
 def test_remove_user(state):
     state.add_user("karl", 5, [6, 7])
@@ -60,7 +56,6 @@ def test_remove_user(state):
     assert len(loaded.users) == len(state.users)
     assert loaded.id_count == state.id_count
 
-
 def test_get_user(state):
     state.add_user("karl", 5, [6, 7])
     state.add_user("zoe", 5, [6, 7])
@@ -68,7 +63,6 @@ def test_get_user(state):
     assert len(state.users) == 2
     assert gotten != None
     assert gotten.user_name == "zoe"
-
 
 def test_generate_client_setup_file(state):
     state.add_user("tim", 6, [56, 76])

@@ -63,12 +63,10 @@ class ServerStateUser():
         else:
             setup_file = fname
 
-        # create dict with setup data to be saved to json
         setup = {}
         setup["user"] = self.get_client_setup_dict()
         setup["server_ip"] = server_ip
         setup["auth_port"] = str(auth_port)
-        # write to file
         with open(setup_file, "w+") as f:
             json.dump(setup, f, indent=4)
 
@@ -88,7 +86,7 @@ class ServerState():
         self.server_ip = server_ip
         self.auth_port = auth_port
 
-        # [] needs to be None in function head: 
+        # list [] needs to be None in function head: 
         # https://stackoverflow.com/questions/4535667/python-list-should-be-empty-on-class-instance-initialisation-but-its-not-why
         if users == None:
             self.users = []
