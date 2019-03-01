@@ -10,7 +10,13 @@ import types
 import multiprocessing
 import pytest
 import time
+import logging
 
+def setup_module():
+    logging.disable(logging.CRITICAL)
+
+def teardown_module():
+    logging.disable(logging.NOTSET)
 
 @pytest.fixture()
 def background_server():
