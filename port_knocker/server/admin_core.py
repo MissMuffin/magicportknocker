@@ -1,7 +1,10 @@
+import ipaddress
+
 import click
 from terminaltables import AsciiTable
-import ipaddress
+
 from port_knocker.config.config import Config
+
 
 def prompt_username():
     blacklisted_characters = ['/', '\\', '.']

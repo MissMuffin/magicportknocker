@@ -1,9 +1,12 @@
-from port_knocker.util.server_state import *
-import pytest
-import uuid
 import base64
-from port_knocker.util.auth import generate_secret
 import shutil
+import uuid
+
+import pytest
+
+from port_knocker.util.auth import generate_secret
+from port_knocker.util.server_state import *
+
 
 @pytest.fixture
 def state():

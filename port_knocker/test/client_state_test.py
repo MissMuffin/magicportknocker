@@ -1,7 +1,10 @@
+import uuid
+
 import pytest
+
 from port_knocker.util.client_state import *
 from port_knocker.util.server_state import *
-import uuid
+
 
 @pytest.fixture
 def server_state_setup():

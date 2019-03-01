@@ -1,9 +1,12 @@
-from port_knocker.util.packet import *
-import pytest
-import cryptography.exceptions
-from base64 import b64encode
 import os
+from base64 import b64encode
+
+import cryptography.exceptions
+import pytest
+
 from port_knocker.util.auth import *
+from port_knocker.util.packet import *
+
 
 def test_good():
     user_id = 89
@@ -26,4 +29,3 @@ def test_good():
     assert rec_p.ticket == ticket
     assert rec_p.new_ticket == new_ticket
     assert rec_p.new_n == new_n
-

@@ -1,3 +1,5 @@
+import json
+import os
 import struct
 from collections import defaultdict
 
@@ -6,8 +8,6 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-import os
-import json
 
 class Packet(object):
     ip = ""

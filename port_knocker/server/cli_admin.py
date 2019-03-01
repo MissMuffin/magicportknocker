@@ -1,11 +1,14 @@
-import click
-from port_knocker.util.server_state import ServerState
-from port_knocker.util.auth import generate_secret
-from port_knocker.server.admin_core import *
-import sys
 import os
-from port_knocker.server.iptables import close_ports
+import sys
+
+import click
+
 from port_knocker.config.config import Config
+from port_knocker.server.admin_core import *
+from port_knocker.server.iptables import close_ports
+from port_knocker.util.auth import generate_secret
+from port_knocker.util.server_state import ServerState
+
 
 @click.group()
 @click.pass_context

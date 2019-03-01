@@ -1,6 +1,8 @@
+import os
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
-import os
+
 
 def hash(hash_input): 
     digest = hashes.Hash(hashes.SHA256(), backend=default_backend())

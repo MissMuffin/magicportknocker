@@ -1,5 +1,6 @@
-import sys
 import logging
+import sys
+
 from port_knocker.config.config import Config
 
 sec_logger = logging.getLogger("security")

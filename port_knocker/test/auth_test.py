@@ -1,5 +1,6 @@
 from port_knocker.util.auth import *
 
+
 def generate_tokens(secret, number_of_tokens):
     tickets = list()
     # init first entry

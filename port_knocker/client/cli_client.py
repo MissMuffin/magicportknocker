@@ -4,15 +4,15 @@ import socket
 import sys
 import time
 
+import appdirs
 import click
 import requests
 
+from port_knocker.config.config import Config
 from port_knocker.util.auth import generate_nth_ticket, generate_secret, hash
 from port_knocker.util.client_state import ClientState
 from port_knocker.util.packet import Packet
-from port_knocker.config.config import Config
 
-import appdirs
 
 class Client():
 

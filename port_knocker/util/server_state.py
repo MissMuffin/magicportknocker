@@ -1,12 +1,15 @@
-import os
 import json
-from base64 import b64encode, b64decode
-from pathlib2 import Path
-from .auth import generate_secret, generate_nth_ticket
+import os
 import shutil
+from base64 import b64decode, b64encode
+
 import appdirs
-from port_knocker.config.config import Config
 from pathlib2 import Path
+
+from port_knocker.config.config import Config
+
+from .auth import generate_nth_ticket, generate_secret
+
 
 class ServerStateUser():
     user_id = 0

@@ -1,16 +1,19 @@
+import logging
+import multiprocessing
+import time
+import types
+import uuid
+
+import pytest
+from gevent.server import DatagramServer
+
+import port_knocker.server.iptables
 from port_knocker.client.cli_client import Client
 from port_knocker.server.cli_server import Server
 from port_knocker.util.auth import *
-from gevent.server import DatagramServer
-from port_knocker.util.server_state import *
-import uuid
-import port_knocker.server.iptables
 from port_knocker.util.client_state import *
-import types
-import multiprocessing
-import pytest
-import time
-import logging
+from port_knocker.util.server_state import *
+
 
 def setup_module():
     logging.disable(logging.CRITICAL)
@@ -218,4 +221,3 @@ def test_end_to_end_failure(capsys, mocker, background_server, tmp_path):
 
     assert new_server_ticket != current_server_ticket
     assert new_client_ticket != current_client_ticket   
-    

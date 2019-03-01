@@ -1,9 +1,12 @@
 import json
-from base64 import b64encode, b64decode
+from base64 import b64decode, b64encode
+
 import appdirs
-from pathlib2 import Path
 import click
+from pathlib2 import Path
+
 from port_knocker.config.config import Config
+
 
 class ClientState():
 
@@ -95,4 +98,3 @@ class ClientState():
         else:
             self.n_tickets -= n_ticket_sent
         self.save()
- 
