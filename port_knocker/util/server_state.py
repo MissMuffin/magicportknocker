@@ -5,6 +5,7 @@ from pathlib2 import Path
 from .auth import generate_secret, generate_nth_ticket
 import shutil
 import appdirs
+from port_knocker.config.config import Config
 from pathlib2 import Path
 
 class ServerStateUser():
@@ -71,9 +72,7 @@ class ServerStateUser():
 
 class ServerState():
 
-    appname = "MagicPortKnocker"
-    appauthor = "Bianca Ploch"
-    _savedir = appdirs.user_data_dir(appname, appauthor)
+    _savedir = appdirs.user_data_dir(Config.APPNAME, Config.APPAUTHOR)
     _savefile = _savedir + "/server_state.json"
     
     id_count = 0

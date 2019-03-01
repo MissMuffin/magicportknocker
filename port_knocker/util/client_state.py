@@ -3,13 +3,11 @@ from base64 import b64encode, b64decode
 import appdirs
 from pathlib2 import Path
 import click
+from port_knocker.config.config import Config
 
 class ClientState():
 
-    appname = "MagicPortKnocker"
-    appauthor = "Bianca Ploch"
-
-    _savedir = appdirs.user_data_dir(appname, appauthor)
+    _savedir = appdirs.user_data_dir(Config.APPNAME, Config.APPAUTHOR)
     _savefile = _savedir + "/savefile.json"
     _setup_file = "setup_file.json"
     

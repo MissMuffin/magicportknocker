@@ -5,6 +5,7 @@ from port_knocker.server.admin_core import *
 import sys
 import os
 from port_knocker.server.iptables import close_ports
+from port_knocker.config.config import Config
 
 @click.group()
 @click.pass_context
@@ -35,7 +36,7 @@ def add(ctx):
         state = setup_server(state)
 
     user_name = prompt_username()
-    n_tickets = click.prompt("Enter number of tickets for this user", type=int, default=3)
+    n_tickets = click.prompt("Enter number of tickets for this user", type=int, default=Config.DEFAULT_NUMBER_OF_TICKETS)
     ports = prompt_port_numbers(user_name)
     state.add_user(user_name=user_name, n_tickets=n_tickets, ports=ports) 
     click.echo("Added {} ticket(s) for user {} with {} priviliges: {}".format(n_tickets, user_name, len(ports), ports))

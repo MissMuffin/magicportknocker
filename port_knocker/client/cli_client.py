@@ -10,13 +10,14 @@ import requests
 from port_knocker.util.auth import generate_nth_ticket, generate_secret, hash
 from port_knocker.util.client_state import ClientState
 from port_knocker.util.packet import Packet
+from port_knocker.config.config import Config
 
 import appdirs
 
 class Client():
 
     _state = None # type: ClientState
-    _resend_packet = 5
+    _resend_packet = Config.NUMBER_OF_PACKET_RESENDS
 
     def is_authenticated(self, server_ip, port, timeout=1.0):
         # try establishing tcp connection to a authorized port
@@ -72,7 +73,7 @@ class Client():
             click.echo(e)
             sys.exit(1)
 
-    def authenticate(self, ip_addr=None, tickets_to_try=3, resend_packet=5):
+    def authenticate(self, ip_addr=None, tickets_to_try=Config.TICKETS_TO_TRY, resend_packet=5):
         ''' 
         try sending udp packet multiple times (5) in case of packet loss
         increase waiting time between resends in case packet takes a bit longer

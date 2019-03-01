@@ -1,6 +1,7 @@
 import click
 from terminaltables import AsciiTable
 import ipaddress
+from port_knocker.config.config import Config
 
 def prompt_username():
     blacklisted_characters = ['/', '\\', '.']
@@ -20,7 +21,7 @@ def prompt_port_numbers(user_name):
         click.echo("Input was empty.")
         return prompt_port_numbers(user_name)
     try:
-        if any(int(port) > 65535 or int(port) < 1 for port in ports):
+        if any(int(port) > Config.PORT_MAX or int(port) < Config.PORT_MIN for port in ports):
             click.echo("Invalid port numbers, needs to be between 1 and 65535")
             return prompt_port_numbers(user_name)
     except ValueError:
@@ -40,7 +41,7 @@ def get_new_ports(old_ports, user_name):
     # validate new ports
     ports = ports.split()
     try:
-        if any(int(port) > 65535 or int(port) < 1 for port in ports):
+        if any(int(port) > Config.PORT_MAX or int(port) < Config.PORT_MIN for port in ports):
             click.echo("Invalid port numbers, needs to be between 1 and 65535")
             return get_new_ports(old_ports, user_name)
     except ValueError:
@@ -94,7 +95,7 @@ def prompt_auth_port(old_auth_port, allow_old):
             return prompt_auth_port(old_auth_port, allow_old)
     else:
         # validate
-        if new_auth_port > 65535 or new_auth_port < 1 :
+        if new_auth_port > Config.PORT_MAX or new_auth_port < Config.PORT_MIN :
             click.echo("Invalid port number, needs to be between 1 and 65535")
             return prompt_auth_port(old_auth_port, allow_old)
     return new_auth_port
