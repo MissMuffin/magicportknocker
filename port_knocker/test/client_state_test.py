@@ -1,6 +1,6 @@
 import pytest
-from .client_state import *
-from .server_state import *
+from port_knocker.util.client_state import *
+from port_knocker.util.server_state import *
 import uuid
 
 @pytest.fixture

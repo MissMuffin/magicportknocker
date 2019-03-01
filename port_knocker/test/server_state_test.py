@@ -1,4 +1,4 @@
-from .server_state import *
+from port_knocker.util.server_state import *
 import pytest
 import uuid
 import base64

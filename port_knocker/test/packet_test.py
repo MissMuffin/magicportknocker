@@ -1,9 +1,9 @@
-from .packet import *
+from port_knocker.util.packet import *
 import pytest
 import cryptography.exceptions
 from base64 import b64encode
 import os
-from .auth import *
+from port_knocker.util.auth import *
 
 def test_good():
     user_id = 89
