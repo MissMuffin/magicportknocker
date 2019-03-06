@@ -32,6 +32,8 @@ Server configuration file
 
 As the name suggests the client setup file needs to be forwarded to the user and placed in the program's root directory. It is then used to initalized the client configuration. Note that after generating the setup file the ticket secret is not saved in the server configuration file, only the first ticket, derived from the ticket secret, is saved on the server. A ticket is derived from the ticket secret by hashing the ticket secret a certain number of times. To get the first ticket the secret is therefore hashed n + 1 times, where n is the number of tickets allotted to the user. To authenticate the user hashes the ticket secret n times, where n is the number of tickets specified in the configuration file. On the server the received ticket is then hashed again and compared to the saved ticket. Are both identical then the ticket holder is assumed to be the authorized user and the authentication is successful --- otherwise the authentication fails and is written to the log. 
 
+The ticket secret and the derived tickets are 32 bytes long bytestrings. To derive the nth ticket the secret is hashed n times using SHA 256. For the first authentication the nth ticket is used. By using a hash function to derive tickets, even if a ticket is captured by an attacker it cannot be used to derive any following tickets. 
+
 #### Server-side authentication
 
 ##### Successful
@@ -61,25 +63,28 @@ When any one of the tickets tried authenticates successfully, i.e. a tcp connect
 
 Should the number of remaining tickets at any time during an authentication become equal or less than two then a new ticket secret will be generated. From this new secret the first new ticket is derived and together with the new number of tickets sent to the server. A number of tickets greater than zero indicates for the server that the client has generated a new secret and the first new ticket of the new secret will need to be saved to disk instead of the received ticket based on the old secret.
 
-#### How a ticket is encypted, packaged and sent
+#### Ticket encryption, packaging, sending
 
-The 
+The packet contains the following fields:
+- user ip
+- user id
+- ticket
+- new number of tickets
+- new ticket.
 
-how ticket is send
-what packet contains
-authenticated encryption
-empty fields for new ticket (new n, new ticket)
+The packet is packed into binary data suitable to be sent over the network using the [netstruct](https://pypi.org/project/netstruct/) library. The data is then encrypted using AES GCM (Galois Counter Mode) from the [crypyography](https://cryptography.io/en/latest/hazmat/primitives/aead/) library. AES GCM is an authenticated encryption which provides both data authenticity and confidentiality. For the encryption the user's symmetric key and a random 32 byte salt/nonce is used.
 
-### How iptables on the server
+The new number of tickets is used as a flag: if the received value is greater than zero, the client has generated a new ticket secret and sent the first ticket along.
 
-Every change made to iptables is reset daily --- this means that all authenticated user's privileged ports are closed at the same day every day without regard to the time the user authenticated. If the daily reset happens at 22:00 and a user authenticated 21:55 then this user's privileged ports are closed and the user has to authenticate again in order to be able to connect to his privileged ports. For this 
-Furthermore the administrator can manually reset iptables by calling the script used for the CRON job located in ```scripts/iptables-reset```.
+The encytpted packet is then sent to the server's authentication port using UDP.
 
-daily iptables reset
-admin can manually reset iptables
-removing user gives option to reset iptables (see concerns: no individual connection closing)
+### Port opening and closing with iptables
 
+Besides allowing SSH connections and listening to UPD packets on the set authentication port all ports on the server are closed.
 
+Every change made to iptables is reset daily --- this means that all authenticated user's privileged ports are closed at the same time every day without regard as to when the user authenticated. If the daily reset happens at 22:00 and a user authenticated 21:55 then every user's privileged ports are closed and the user has to authenticate again in order to be able to connect. 
+
+When updating or removing a user the administrator is given the option to close all currently open user ports. Individual closing of a user's ports is not possible since the correlation of IP addresses and users is not saved upon user authentication. Upon removing all users ports are automatically closed as well. Furthermore, the administrator can manually reset iptables by calling the script used for the CRON job located in ```scripts/iptables-reset```.
 
 ## Concerns
 - ticket hashing might require salt to be stronger (one collision in the chain makes all following hashes vulnerable otherwise)
