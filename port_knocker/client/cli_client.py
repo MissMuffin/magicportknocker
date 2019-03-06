@@ -58,7 +58,7 @@ class Client():
         # 2 because: if server desync happened we need one backup ticket
         if n_tickets <= 2 and not new_secret:
             new_secret = generate_secret()
-            new_n = 100
+            new_n = Config.DEFAULT_NUMBER_OF_TICKETS
             new_ticket = generate_nth_ticket(new_secret, new_n + 1)
 
         # create packet to send
