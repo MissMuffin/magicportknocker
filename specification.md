@@ -20,21 +20,29 @@ This is done on the basis of a shared secret, which is known to both user and se
 ## Requirements and requirements fulfillment
 1. The project and its dependencies must be open source
 
-        Yes.
+    ```
+    Yes.
+    ```
 
 2.  In the case that the data on the server is compromised (we assume read-only access) the attacker should not be able to find enough information to successfully authenticate as a user  
 
-        This is addressed by using a hash chain token for authentication. The user uses the nth token in the chain while the server has the (n+1)th token saved on disk. The token received from the user is then hashed once more and compared to the saved token. We take advantage of the one-way property of the hash chain: the hash function has no inverse and a token from the chain cannot be used to compute an earlier token of that chain. By reading the (n + 1)th token saved on the server the attacker cannot gleam any information on what the nth token might be.
+    ```
+    This is addressed by using a hash chain token for authentication. The user uses the nth token in the chain while the server has the (n+1)th token saved on disk. The token received from the user is then hashed once more and compared to the saved token. We take advantage of the one-way property of the hash chain: the hash function has no inverse and a token from the chain cannot be used to compute an earlier token of that chain. By reading the (n + 1)th token saved on the server the attacker cannot gleam any information on what the nth token might be.
+    ```
 
 3. Protection from replay attacks
 
-        After a token has been used it expires. Replaying an authentication packet sent to the server will not authenticate again.
-        
-        Not covered is the situation where the attacker captures and drops all authentication packets from the client. Assuming the attacker is able to connect to the same network as the client at the time when the authentication packet was created, the attacker is then able to replay the captured packets and successfully authenticate.
+    ```
+    After a token has been used it expires. Replaying an authentication packet sent to the server will not authenticate again.
+    
+    Not covered is the situation where the attacker captures and drops all authentication packets from the client. Assuming the attacker is able to connect to the same network as the client at the time when the authentication packet was created, the attacker is then able to replay the captured packets and successfully authenticate.
+    ```
 
 4. Using nmap server to scan the server will reveal no open ports 
 
-        By default only the UDP port used for authentication will receive packets, all other incoming traffic is to be dropped.
+    ```
+    By default only the UDP port used for authentication will receive packets, all other incoming traffic is to be dropped.
+    ```
 
 ## Authentication protocol
 
