@@ -36,6 +36,10 @@
     ```
 11. If magicportknocker/scripts/iptables-reset is not exceutable for some reason make it executable with ```chmod +x```
 
+## Setup iptbales
+
+[See here](https://github.com/MissMuffin/magicportknocker/blob/master/iptables.md)
+
 ## Configure CRON job for daily firewall reset
 On the server run
 ```
