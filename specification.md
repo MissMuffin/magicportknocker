@@ -44,16 +44,16 @@ This is done on the basis of a shared secret, which is known to both user and se
 
 A ticket is derived from the ticket secret $x$ by computing the hash function $h(x)$. To compute a ticket the ticket secret is hashed n times, where n is the number of tickets allotted to the user. The default value for n is 100:
 
-$\text{First ticket} = h^{100}(x)$.
+```
+First ticket = h^100(x)     where x is the ticket secret.
+```
 
 On the server the result of computing $h^{101}(x)$ is stored. Upon receiving a ticket from the client the received ticket is hashed again and compared to the stored ticket. 
 
-$
-\text{Stored ticket} = h^{101}(x)\\
-\text{Received ticket} = h^{100}(x)\\
-$
-
 ```
+Stored ticket = h^101(x)
+Received ticket = h^100(x)
+
 Evaluate: Stored ticket == h(received ticket)
 if      True:   authentication succeeds
         False:  auenthication fails
