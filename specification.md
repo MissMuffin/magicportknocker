@@ -38,9 +38,9 @@ This is done on the basis of a shared secret, which is known to both user and se
 
 ## Authentication protocol
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Client flow chart")
+![alt text](https://github.com/MissMuffin/magicportknocker/blob/master/images/flow_chart_client.png "Client flow chart")
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Server flow chart")
+![alt text](https://github.com/MissMuffin/magicportknocker/blob/master/images/flow_chart_server.png "Server flow chart")
 
 A ticket is derived from the ticket secret $x$ by computing the hash function $h(x)$. To compute a ticket the ticket secret is hashed n times, where n is the number of tickets allotted to the user. The default value for n is 100:
 
