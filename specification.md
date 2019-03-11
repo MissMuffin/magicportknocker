@@ -119,7 +119,9 @@ Server configuration file
   - list of privileged ports
 ```
 
-The client setup file needs to be forwarded to the user and placed in the program's root directory. It is then used to initialize the client configuration. Note that after generating the setup file the ticket secret is not saved in the server configuration file, only the first ticket, derived from the ticket secret, is saved on the server.
+The client setup file needs to be forwarded to the user and placed in the program's root directory. It is then used to initialize the client configuration. The client configuration is saved to ~/.local/share/MagicPortKnocker.
+
+Note that after generating the setup file the ticket secret is not saved in the server configuration file, only the first ticket, derived from the ticket secret, is saved on the server.
 
 ### Ticket encryption, packaging, sending
 
@@ -157,3 +159,4 @@ When updating or removing a user the administrator is given the option to close 
   - Would also allow admin to view all currently authenticated users
 - Make authenticated sessions persistent
 - Allow for a time limit to be set for an individual authenticated session
+- Add option to delete current client save file

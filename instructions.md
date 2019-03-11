@@ -25,9 +25,8 @@
     ```
     apt install python3-setuptools
     ```
-9.  install python package
+9.  install python package (exceute from inside repo)
     ```
-    python3 setup.py install
     pip3 install .
     ```
     This will add portknock-[admin|client|server] to your PATH
@@ -75,7 +74,7 @@ ps uww -C cron
     ```
     portknock-admin add
     ```
-3. Then copy /user_setup/username_id/setup_file.json to magicportknocker dir on client computer
+3. Then copy /user_setup/username_id/setup_file.json to dir on client computer from where the client programm will be run
 4. Start server
     ```
     nohup portknock-server > /dev/null 2>&1 & echo $! > server.pid
@@ -86,20 +85,25 @@ ps uww -C cron
     ```
 
 ### Create service to automatically start the server on system start
-1. Copy file from systemd_file to /etc/systemd/system/
-2. Reload systemd
+1. Ajust `WorkingDirectory=/home/ubuntu/magicportknocker/` to where you put the repo
+2. Copy file from systemd_file to /etc/systemd/system/
+3. Make sure file has correct permissions (does not need to be executable)
+    ```
+    chmod 664 /etc/systemd/system/mpks.service
+    ```
+4. Reload systemd
    ```
    systemctl daemon-reload
    ```
-3. Start the service
+5. Start the service
     ```
     systemctl start mpks.service
     ```
-4. Configure automatic start on system boot
+6. Configure automatic start on system boot
     ```
     systemctl enable mpks.service
     ```
-5. Reboot and check if active with 
+7. Reboot and check if active with 
    ```
    systemctl is-active mpks.service
    ```
@@ -110,7 +114,7 @@ The server logs successful and failed authentication attempts to the file ```sec
 ## Authenticate using the client
 Note: client authentication will only be succesful if something is listening on the user's privileged ports so that a tcp connection can be established. After an authentication attempt the client tries to tcp connect to all the user's privileged ports in order to determine wether the authentication was succesful. An easy solution for this is to serve a simple webpage on the ports in question using nginx.
 
-1. Make sure you have the ```setup_file.json``` from the user_setup dir on the server
+1. Make sure you have the ```setup_file.json``` from the user_setup dir on the server in root dir from where you run the client
 2. 
     ```
     portknock-client
@@ -118,9 +122,9 @@ Note: client authentication will only be succesful if something is listening on 
 
 ## After changing things
 
-Changed project: reinstall setup.py
+After changing project: reinstall from magiportknocker dir
 ```
-python setup.py install
+pip3 install --upgrade --force-reinstall .
 ```
 
 Changed service file: reload daemon, restart service

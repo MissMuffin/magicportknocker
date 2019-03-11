@@ -32,6 +32,18 @@ sudo iptables -A INPUT -p udp -m udp --dport 13337 -j ACCEPT
 sudo iptables -P INPUT DROP
 ```
 
+For easy copy paste
+```
+sudo iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A OUTPUT -o lo -j ACCEPT
+sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A INPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -p udp -m udp --dport 13337 -j ACCEPT
+sudo iptables -P INPUT DROP
+```
+
 
 ## Persistent setup
 
