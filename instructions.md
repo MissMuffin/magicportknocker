@@ -28,6 +28,7 @@
 9.  install python package
     ```
     python3 setup.py install
+    pip3 install .
     ```
     This will add portknock-[admin|client|server] to your PATH
 10. make sure nginx is installed and running on necessary ports for presentation
