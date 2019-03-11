@@ -6,7 +6,7 @@ class Config:
     # admin core
     DEFAULT_NUMBER_OF_TICKETS = 100
     ## range of acceptable ports
-    PORT_MIN = 10000
+    PORT_MIN = 1
     PORT_MAX = 65535
 
     # cli client

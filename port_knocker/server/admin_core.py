@@ -25,7 +25,7 @@ def prompt_port_numbers(user_name):
         return prompt_port_numbers(user_name)
     try:
         if any(int(port) > Config.PORT_MAX or int(port) < Config.PORT_MIN for port in ports):
-            click.echo("Invalid port numbers, needs to be between 1 and 65535")
+            click.echo("Invalid port numbers, needs to be between {} and {}".format(Config.PORT_MIN, Config.PORT_MAX))
             return prompt_port_numbers(user_name)
     except ValueError:
         click.echo("Ports must be integers")
