@@ -36,7 +36,7 @@
     ```
 11. If magicportknocker/scripts/iptables-reset is not exceutable for some reason make it executable with ```chmod +x```
 
-## Setup iptbales
+## Setup iptables
 
 [See here](https://github.com/MissMuffin/magicportknocker/blob/master/iptables.md)
 
