@@ -32,13 +32,13 @@ Using nmap server to scan the server will reveal no open ports | By default only
 
 ![alt text](https://github.com/MissMuffin/magicportknocker/blob/master/images/flow_chart_server.png "Server flow chart")
 
-A ticket is derived from the ticket secret  `x` by computing the hash function  `h(x) `. To compute a ticket the ticket secret is hashed n times, where n is the number of tickets allotted to the user. The default value for n is 100:
+A ticket is derived from the ticket secret  `x` by computing the hash function  `h(x)`. To compute a ticket the ticket secret is hashed n times, where n is the number of tickets allotted to the user. The default value for n is 100:
 
 ```
 First ticket = h^100(x)     where x is the ticket secret.
 ```
 
-On the server the result of computing $h^{101}(x)$ is stored. Upon receiving a ticket from the client the received ticket is hashed again and compared to the stored ticket. 
+On the server the result of computing `h^{101}(x)` is stored. Upon receiving a ticket from the client the received ticket is hashed again and compared to the stored ticket. 
 
 ```
 Stored ticket = h^101(x)
