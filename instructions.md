@@ -85,7 +85,7 @@ ps uww -C cron
     ```
 
 ### Create service to automatically start the server on system start
-1. Ajust `WorkingDirectory=/home/ubuntu/magicportknocker/` to where you put the repo
+1. Adjust `WorkingDirectory=/home/ubuntu/magicportknocker/` to where you put the repo
 2. Copy file from systemd_file to /etc/systemd/system/
 3. Make sure file has correct permissions (does not need to be executable)
     ```
